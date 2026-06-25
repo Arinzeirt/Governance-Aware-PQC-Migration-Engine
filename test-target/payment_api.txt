@@ -1,0 +1,5 @@
+This payment platform uses RSA for key exchange.
+
+OpenSSL is used for TLS communication.
+
+Transactions are protected using SHA-256.
