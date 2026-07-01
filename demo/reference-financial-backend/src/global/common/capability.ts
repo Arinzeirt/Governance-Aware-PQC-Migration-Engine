@@ -1,0 +1,42 @@
+export const CAPABILITIES = [
+  // blog:
+  'BLOG_CREATE',
+  'BLOG_READ',
+  'BLOG_UPDATE',
+  'BLOG_DELETE',
+
+  // email
+  'EMAIL_SEND',
+  'EMAIL_READ',
+  'EMAIL_UPDATE',
+  'EMAIL_DELETE',
+
+  // copyTrading
+  'COPYTRADE_READ',
+  'COPYTRADE_CREATE',
+  'COPYTRADE_DELETE',
+  'COPYTRADE_UPDATE',
+
+  // gamified
+  'GAMIFIED_READ',
+  'GAMIFIED_CREATE',
+  'GAMIFIED_DELETE',
+  'GAMIFIED_UPDATE',
+
+  // learningHub
+  'LEARNINGHUB_CREATE',
+  'LEARNINGHUB_READ',
+  'LEARNINGHUB_UPDATE',
+  'LEARNINGHUB_DELETE',
+
+  // Traders
+  'TRADE_READ',
+  'TRADE_CREATE',
+  'TRADE_MANAGE',
+  'TRADE_UPDATE',
+  'TRADE_DELETE',
+
+  // user
+  'MANAGE_USER',
+  'MANAGE_PRO_TRADER_USER',
+];

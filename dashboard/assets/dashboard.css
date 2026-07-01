@@ -1,0 +1,362 @@
+/* ==========================================================
+   EQMP Technology Preview v1.0
+   Enterprise Design System
+   Enet Technologies
+========================================================== */
+
+
+/* ----------------------------------------------------------
+   APPLICATION
+---------------------------------------------------------- */
+
+.stApp{
+
+    background:#0F172A;
+
+    color:#F8FAFC;
+
+}
+
+.block-container{
+
+    max-width:1450px;
+
+    margin:auto;
+
+    padding-top:.8rem !important;
+
+    padding-bottom:1rem !important;
+
+    padding-left:2.4rem !important;
+
+    padding-right:2.4rem !important;
+
+}
+
+section.main>div{
+
+    padding-top:0 !important;
+
+}
+
+.element-container{
+
+    margin-bottom:.25rem !important;
+
+}
+
+
+/* ----------------------------------------------------------
+   TYPOGRAPHY
+---------------------------------------------------------- */
+
+h1,h2,h3{
+
+    color:#F8FAFC;
+
+    font-weight:700;
+
+    margin-bottom:.35rem;
+
+}
+
+p{
+
+    color:#CBD5E1;
+
+    line-height:1.55;
+
+}
+
+
+/* ----------------------------------------------------------
+   ENTERPRISE PANELS
+---------------------------------------------------------- */
+
+.eqmp-section{
+
+    background:#1E293B;
+
+    border:1px solid #334155;
+
+    border-radius:14px;
+
+    padding:18px;
+
+    margin-bottom:12px;
+
+    transition:.20s ease;
+
+}
+
+.eqmp-section:hover{
+
+    border-color:#2563EB;
+
+    transform:translateY(-2px);
+
+    box-shadow:0 8px 18px rgba(37,99,235,.12);
+
+}
+
+.eqmp-title{
+
+    color:#F8FAFC;
+
+    font-size:20px;
+
+    font-weight:700;
+
+    margin-bottom:10px;
+
+}
+
+.eqmp-subtitle{
+
+    color:#94A3B8;
+
+    font-size:13px;
+
+    line-height:1.45;
+
+    margin-bottom:12px;
+
+}
+
+
+/* ----------------------------------------------------------
+   KPI
+---------------------------------------------------------- */
+
+.eqmp-kpi{
+
+    background:#1E293B;
+
+    border:1px solid #334155;
+
+    border-radius:12px;
+
+    padding:16px;
+
+    min-height:110px;
+
+    display:flex;
+
+    flex-direction:column;
+
+    justify-content:center;
+
+    text-align:center;
+
+}
+
+.eqmp-kpi-title{
+
+    color:#94A3B8;
+
+    font-size:12px;
+
+    font-weight:600;
+
+}
+
+.eqmp-kpi-value{
+
+    color:#F8FAFC;
+
+    font-size:30px;
+
+    font-weight:700;
+
+    margin-top:8px;
+
+}
+
+.eqmp-kpi-desc{
+
+    color:#64748B;
+
+    font-size:11px;
+
+    margin-top:8px;
+
+}
+
+
+/* ----------------------------------------------------------
+   FEATURE CARDS
+---------------------------------------------------------- */
+
+.eqmp-feature{
+
+    background:#1E293B;
+
+    border:1px solid #334155;
+
+    border-radius:14px;
+
+    padding:22px;
+
+    min-height:145px;
+
+    text-align:center;
+
+    transition:.2s ease;
+
+}
+
+.eqmp-feature:hover{
+
+    border-color:#2563EB;
+
+    transform:translateY(-2px);
+
+}
+
+.eqmp-feature-title{
+
+    color:#F8FAFC;
+
+    font-size:24px;
+
+    font-weight:700;
+
+    margin-bottom:12px;
+
+}
+
+.eqmp-feature-desc{
+
+    color:#CBD5E1;
+
+    font-size:14px;
+
+    line-height:1.5;
+
+}
+
+
+/* ----------------------------------------------------------
+   STATUS BADGES
+---------------------------------------------------------- */
+
+.eqmp-active{
+
+    background:#16A34A;
+
+    color:white;
+
+    border-radius:20px;
+
+    padding:5px 14px;
+
+    font-size:11px;
+
+    font-weight:700;
+
+}
+
+.eqmp-enterprise{
+
+    background:#334155;
+
+    color:#CBD5E1;
+
+    border-radius:20px;
+
+    padding:5px 14px;
+
+    font-size:11px;
+
+    font-weight:700;
+
+}
+
+
+/* ----------------------------------------------------------
+   BUTTONS
+---------------------------------------------------------- */
+
+.stButton>button{
+
+    width:100%;
+
+    border:none;
+
+    border-radius:10px;
+
+    background:#2563EB;
+
+    color:white;
+
+    font-weight:600;
+
+    transition:.2s;
+
+}
+
+.stButton>button:hover{
+
+    background:#1D4ED8;
+
+}
+
+.stDownloadButton>button{
+
+    width:100%;
+
+    border-radius:10px;
+
+}
+
+
+/* ----------------------------------------------------------
+   TABLES / METRICS
+---------------------------------------------------------- */
+
+table{
+
+    border-collapse:collapse;
+
+}
+
+thead tr{
+
+    background:#1E293B;
+
+}
+
+tbody tr{
+
+    background:#0F172A;
+
+}
+
+[data-testid="stMetric"]{
+
+    background:#1E293B;
+
+    border:1px solid #334155;
+
+    border-radius:10px;
+
+    padding:10px;
+
+}
+
+
+/* ----------------------------------------------------------
+   FOOTER
+---------------------------------------------------------- */
+
+.eqmp-footer{
+
+    color:#64748B;
+
+    text-align:center;
+
+    font-size:12px;
+
+    margin-top:24px;
+
+}

@@ -1,6 +1,8 @@
 from pathlib import Path
 import re
+
 from classifier import classify_content
+
 
 CRYPTO_PATTERNS = {
     "RSA": r"\bRSA\b",
@@ -16,34 +18,62 @@ CRYPTO_PATTERNS = {
     "SHA-256": r"\bSHA-256\b"
 }
 
-def scan_directory(directory):
+
+def scan_directory(directory, max_findings=None):
+
     findings = {}
 
+    finding_count = 0
+
     for file in Path(directory).rglob("*"):
-        if file.is_file():
-            try:
-                content = file.read_text(errors="ignore")
-                matches = []
 
-                for keyword, pattern in CRYPTO_PATTERNS.items():
-                    if re.search(pattern, content):
-                        matches.append({
-                            "type": "keyword",
-                            "value": keyword
-                        })
+        if not file.is_file():
+            continue
 
-                classifications = classify_content(content)
+        try:
 
-                for item in classifications:
+            content = file.read_text(errors="ignore")
+
+            matches = []
+
+            for keyword, pattern in CRYPTO_PATTERNS.items():
+
+                if re.search(pattern, content):
+
                     matches.append({
-                        "type": "classification",
-                        "value": item
+
+                        "type": "keyword",
+
+                        "value": keyword
+
                     })
 
-                if matches:
-                    findings[str(file)] = matches
+            classifications = classify_content(content)
 
-            except Exception:
-                pass
+            for item in classifications:
+
+                matches.append({
+
+                    "type": "classification",
+
+                    "value": item
+
+                })
+
+            if matches:
+
+                findings[str(file)] = matches
+
+                finding_count += len(matches)
+
+                if (
+                    max_findings is not None
+                    and finding_count >= max_findings
+                ):
+                    break
+
+        except Exception:
+
+            continue
 
     return findings

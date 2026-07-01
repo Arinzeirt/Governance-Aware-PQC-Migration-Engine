@@ -1,0 +1,470 @@
+import { findMany, findOne } from '@app/common';
+import { IUser } from '@app/users/interface';
+import { CategoryV5 } from 'bybit-api';
+
+export interface ITraders {
+  id: string;
+  follower: string; //the pro trader you are following
+  following: string; //the user following pro trader
+}
+
+export enum status {
+  open = 'open',
+  close = 'close',
+  pending = 'pending',
+  cancel = 'cancel',
+  schedule = 'scheduled',
+  draft = 'draft',
+  fail = 'failed',
+}
+
+export enum type {
+  original = 'original',
+  copy = 'copy',
+}
+
+export enum outcome {
+  win = 'Win',
+  loss = 'Loss',
+  liq = 'Liquidated',
+}
+
+export interface positionSize {
+  amount: number;
+  currency: 'USDT' | 'BTC';
+}
+
+export enum duration {
+  scalp = 'Scalp',
+  intraday = 'Intraday',
+  swing = 'Swing',
+  position = 'Position',
+  custom = 'custom',
+}
+
+export enum riskLevel {
+  low = 'Low',
+  medium = 'Medium',
+  high = 'High',
+}
+
+export enum orderType {
+  market = 'Market Order',
+  limit = 'Limit Order',
+}
+
+export enum copiers {
+  most = 'most copied',
+  least = 'least copied',
+}
+
+export interface ITrades {
+  id: string;
+  asset: string;
+  action: 'Buy' | 'Sell';
+  symbol: string;
+  entryPrice: number;
+  category: CategoryV5;
+  stopLoss: number;
+  takeProfit: number;
+  leverage: number;
+  isDraft: boolean;
+  outcome?: outcome;
+  tradeRoi: number;
+  userId: string;
+  user: IUser;
+  creatorId: string;
+  creator: IUser;
+  currentPrice: number; //make api call when creating new trade to get the current price using the symbol
+  positionSize: positionSize;
+  realizedPnl: number; //the amount of profit take or lose in percentage update in realtime use subtract for lose and without minus sign for profit
+  noOfCopiers: number; //once user copy the trade and save successful this will increase by one
+  duration: duration;
+  scheduleStartId?: number;
+  scheduleEndId?: number;
+  image?: string;
+  startDate?: Date;
+  orderType: orderType;
+  expiresAt?: Date;
+  riskLevel?: riskLevel;
+  fundId?: string;
+  comment?: string;
+  exitPrice?: number;
+  status: string;
+  tradeType: type;
+  orderLinkId?: string;
+  orderId?: string;
+  errorMsg?: string;
+  margin: number;
+  identifier: string;
+  risk_reward_score?: number;
+  trend_alignment_score?: number;
+  liquidity_score?: number;
+  volatility_risk_score?: number;
+  entry_quality_score?: number;
+  timing_score?: number;
+  leverage_risk_score?: number;
+  overall_score?: number;
+  reasoning?: string;
+  suggestions?: string;
+  minCopiesAmount?: number;
+  createdAt: Date;
+  updatedAt?: Date;
+}
+
+export interface createTrade extends Pick<
+  ITrades,
+  | 'asset'
+  | 'action'
+  | 'entryPrice'
+  | 'stopLoss'
+  | 'takeProfit'
+  | 'leverage'
+  | 'duration'
+  | 'orderType'
+  | 'comment'
+  | 'startDate'
+  | 'isDraft'
+  | 'riskLevel'
+  | 'orderLinkId'
+  | 'positionSize'
+  | 'category'
+  | 'expiresAt'
+  | 'minCopiesAmount'
+> {
+  scheduleStartId?: number;
+  scheduleEndId?: number;
+}
+export interface updateTrade extends Partial<
+  Omit<ITrades, 'creator' | 'user'>
+> {
+  endDate?: Date;
+}
+export interface findManyTrade extends findMany {
+  creatorId?: string[];
+  userId?: string[];
+  symbol?: string[];
+  status?: status;
+  action?: 'Sell' | 'Buy';
+  asset?: string[];
+  outcome?: outcome[];
+  copiers?: copiers;
+  fromDate?: Date;
+  toDate?: Date;
+  type?: type;
+  draft?: boolean;
+  timeFrame?: string; //TODO new
+  roiRange?: string;
+  riskLevel?: riskLevel;
+  popularity?:
+    | 'trending'
+    | 'Hot Picks'
+    | 'Most copied today'
+    | 'high performance trade';
+  aiscoring?: number;
+  timeRemaining?: number;
+}
+
+export interface updateParameter {
+  identifier: string;
+  id?: string;
+}
+export interface notifyFollowers {
+  tradeId?: string;
+  creatorId: string;
+}
+
+export interface copyTrading {
+  tradeId: string;
+  amount: number;
+}
+
+export interface findOneTrade extends findOne {
+  creatorId?: string;
+  userId?: string;
+  symbol?: string;
+  status?: status;
+  action?: 'Buy' | 'Sell';
+  asset?: string;
+  outcome?: outcome;
+  copiers?: copiers;
+  tradeType?: type;
+  draft?: boolean;
+}
+
+export interface executeTrade {
+  action: 'Buy' | 'Sell';
+  orderType: orderType;
+  currentPrice: number;
+  entryPrice: number;
+}
+
+export interface tradingResponse {
+  rateLimitApi: undefined;
+  retCode: number; //0;
+  retMsg: string; //'OK';
+  result: {
+    orderId: string; //'2068773971486315776';
+    orderLinkId: string; //'2068773971486315777';
+  };
+  retExtInfo: Record<string, any>;
+  time: Date;
+}
+
+export interface TradingStats {
+  activeTrade: number;
+  closedTrade: number;
+  totalPnL: number;
+  winRate: number;
+  averageROI: number;
+  currentProfit: number;
+  profitChange: {
+    amount: number;
+    percentage: number;
+    isIncreased: boolean;
+    // trend: 'increase' | 'decrease' | 'no_change';
+  };
+  followers: number;
+  riskLevelTrends: string;
+  // riskLevelTrends: {
+  //   low: number;
+  //   medium: number;
+  //   high: number;
+  // };
+}
+
+export type aiTradeResponse = Pick<
+  ITrades,
+  | 'risk_reward_score'
+  | 'trend_alignment_score'
+  | 'liquidity_score'
+  | 'volatility_risk_score'
+  | 'entry_quality_score'
+  | 'timing_score'
+  | 'leverage_risk_score'
+  | 'overall_score'
+  | 'reasoning'
+  | 'suggestions'
+>;
+
+export type Currency =
+  | 'btc'
+  | 'eth'
+  | 'ltc'
+  | 'bch'
+  | 'bnb'
+  | 'eos'
+  | 'xrp'
+  | 'xlm'
+  | 'link'
+  | 'dot'
+  | 'yfi'
+  | 'sol'
+  | 'usd'
+  | 'aed'
+  | 'ars'
+  | 'aud'
+  | 'bdt'
+  | 'bhd'
+  | 'bmd'
+  | 'brl'
+  | 'cad'
+  | 'chf'
+  | 'clp'
+  | 'cny'
+  | 'czk'
+  | 'dkk'
+  | 'eur'
+  | 'gbp'
+  | 'gel'
+  | 'hkd'
+  | 'huf'
+  | 'idr'
+  | 'ils'
+  | 'inr'
+  | 'jpy'
+  | 'krw'
+  | 'kwd'
+  | 'lkr'
+  | 'mmk'
+  | 'mxn'
+  | 'myr'
+  | 'ngn'
+  | 'nok'
+  | 'nzd'
+  | 'php'
+  | 'pkr'
+  | 'pln'
+  | 'rub'
+  | 'sar'
+  | 'sek'
+  | 'sgd'
+  | 'thb'
+  | 'try'
+  | 'twd'
+  | 'uah'
+  | 'vef'
+  | 'vnd'
+  | 'zar'
+  | 'xdr'
+  | 'xag'
+  | 'xau'
+  | 'bits'
+  | 'sats';
+
+export interface tokenPrice {
+  vs_currencies?: Currency;
+  vs_currency?: Currency;
+  ids?: string | string[];
+  names?: string | string[];
+  symbols?: string | string[];
+  category?: string;
+  order?: string;
+  per_page?: number;
+  page?: number;
+  sparkline?: boolean;
+  price_change_percentage?: string;
+  locale?: string;
+  include_tokens?: 'all' | 'top';
+  include_market_cap?: boolean;
+  include_24hr_vol?: boolean;
+  include_24hr_change?: boolean;
+  include_last_updated_at?: boolean;
+  precision?: 'all' | number;
+}
+
+export interface tokenPriceResponse {
+  usd: number;
+  usd_market_cap: number;
+  usd_24h_vol: number;
+  usd_24h_change: number;
+  last_updated_at: number;
+  id: string;
+  symbol: string;
+  name: string;
+  image: string;
+  current_price: number;
+  market_cap: number;
+  market_cap_rank: number;
+  fully_diluted_valuation: number;
+  total_volume: number;
+  high_24h: number;
+  low_24h: number;
+  price_change_24h: number;
+  price_change_percentage_24h: number;
+  market_cap_change_24h: number;
+  market_cap_change_percentage_24h: number;
+  circulating_supply: number;
+  total_supply: number;
+  max_supply: number;
+  ath: number;
+  ath_change_percentage: number;
+  ath_date: string;
+  atl: number;
+  atl_change_percentage: number;
+  atl_date: string;
+  roi: string | null;
+  last_updated: string;
+}
+
+export interface quality {
+  userUSDT: number;
+  markPrice: number;
+  minNotionalUSDT: number;
+  minOrderQty: number;
+  qtyStep: number;
+  leverage: number;
+}
+
+export interface tradeExecuteData {
+  category: string;
+  symbol: string;
+  // orderId: string;
+  // orderLinkId: string;
+  // blockTradeId: string;
+  // side: 'Buy' | 'Sell';
+  positionIdx: number;
+  orderStatus: string;
+  cancelled: string;
+  cancelType: string;
+  cancelByUser: string;
+  rejectReason: string;
+  timeInForce: string;
+  // isLeverage: string;
+  price: string;
+  qty: string;
+  avgPrice: string;
+  // leavesQty: string;
+  leavesValue: string;
+  cumExecQty: string;
+  cumExecValue: string;
+  cumExecFee: string;
+  // orderType: string;
+  // stopOrderType: string;
+  orderIv: string;
+  triggerPrice: string;
+  takeProfit: string;
+  stopLoss: string;
+  triggerBy: string;
+  tpTriggerBy: string;
+  slTriggerBy: string;
+  triggerDirection: number;
+  placeType: string;
+  lastPriceOnCreated: string;
+  closeOnTrigger: false;
+  reduceOnly: boolean;
+  smpGroup: number;
+  smpType: string;
+  smpOrderId: string;
+  slLimitPrice: string;
+  tpLimitPrice: string;
+  // marketUnit: string;
+  createdTime: string;
+  updatedTime: string;
+  // feeCurrency: string;
+  slippageTolerance: string;
+  slippageToleranceType: string;
+  cumFeeDetail: any[];
+
+  // execution data fields
+  // category: string;
+  // symbol: string;
+  closedSize: string;
+  execFee: string;
+  execId: string;
+  execPrice: string;
+  execQty: string;
+  execType: string;
+  execValue: string;
+  feeRate: string;
+  tradeIv: string;
+  markIv: string;
+  blockTradeId: string;
+  markPrice: string;
+  indexPrice: string;
+  underlyingPrice: string;
+  leavesQty: string;
+  orderId: string;
+  orderLinkId: string;
+  orderPrice: string;
+  orderQty: string;
+  orderType: string;
+  stopOrderType: string;
+  side: string;
+  execTime: Date;
+  isLeverage: string;
+  isMaker: boolean;
+  seq: number;
+  marketUnit: string;
+  execPnl: string;
+  createType: string;
+  extraFees: any[];
+  feeCurrency: string;
+}
+
+export interface tradeUpdateData {
+  topic: 'order' | 'execution';
+  id: string;
+  creationTime: Date;
+  data: tradeExecuteData[];
+}

@@ -1,0 +1,215 @@
+import { FindMany, FindOne, transform } from '@app/common';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { Transform, Type } from 'class-transformer';
+import {
+  IsBoolean,
+  IsEmail,
+  IsIn,
+  IsInt,
+  IsNotEmpty,
+  IsNumber,
+  IsObject,
+  IsOptional,
+  IsString,
+  MaxLength,
+  Min,
+  ValidateNested,
+} from 'class-validator';
+import {
+  changePin,
+  createUser,
+  ctp,
+  findManyUser,
+  findOneUser,
+  personalize,
+  Role,
+  updateProfile,
+  userType,
+} from '../interface';
+
+export class TopUpDto {
+  @ApiProperty({ example: 500, minimum: 1 })
+  @IsNumber()
+  @Min(1) // must be at least $1
+  @Transform(({ value }: { value: string }) => parseInt(value, 10))
+  amount: number;
+}
+
+export class FindManyUser extends FindMany implements findManyUser {
+  @IsOptional()
+  @IsString({ each: true })
+  @ApiProperty({ type: [String] })
+  @Transform(({ value }: transform) =>
+    typeof value === 'string' ? [value] : value,
+  )
+  fullName?: string[];
+
+  @IsOptional()
+  @IsString({ each: true })
+  @ApiProperty({ type: [String] })
+  @IsEmail({}, { each: true })
+  @Transform(({ value }: transform) =>
+    typeof value === 'string' ? [value] : value,
+  )
+  email?: string[];
+
+  @IsOptional()
+  @IsBoolean({ each: true })
+  @ApiProperty({ type: [Boolean] })
+  @Transform(({ value }) => {
+    if (Array.isArray(value)) {
+      return value.map((v) => v === 'true' || v === true);
+    }
+    if (value === 'true' || value === true) return [true];
+    if (value === 'false' || value === false) return [false];
+    return;
+  })
+  isVerified?: boolean[];
+
+  @IsOptional()
+  @IsString({ each: true })
+  @ApiProperty({ type: [String] })
+  @Transform(({ value }: transform) =>
+    typeof value === 'string' ? [value] : value,
+  )
+  roleName?: string[];
+
+  @IsOptional()
+  @IsString({ each: true })
+  @ApiProperty({ type: [String] })
+  @Transform(({ value }: transform) =>
+    typeof value === 'string' ? [value] : value,
+  )
+  username?: string[];
+
+  @IsOptional()
+  @IsString({ each: true })
+  @ApiProperty({ type: [String] })
+  @Transform(({ value }: transform) =>
+    typeof value === 'string' ? [value] : value,
+  )
+  privilege?: string[];
+}
+
+export class FindOneUser extends FindOne implements findOneUser {
+  @IsString()
+  @IsOptional()
+  @ApiPropertyOptional({ type: String })
+  @Transform(({ value }: { value: string }) => (value ? value.trim() : null))
+  fullName?: string;
+
+  @IsString()
+  @IsEmail()
+  @IsOptional()
+  @ApiPropertyOptional({ type: String })
+  @Transform(({ value }: { value: string }) => (value ? value.trim() : null))
+  email?: string;
+
+  @IsString()
+  @IsOptional()
+  @ApiPropertyOptional({ type: String })
+  @Transform(({ value }: { value: string }) => (value ? value.trim() : null))
+  username: string;
+
+  @IsString()
+  @IsOptional()
+  @ApiPropertyOptional({ type: String })
+  @Transform(({ value }: { value: string }) => (value ? value.trim() : null))
+  refercode?: string;
+}
+
+export class Personalize implements personalize {
+  @IsString()
+  @IsOptional()
+  howFamiliar: string;
+
+  @IsString()
+  @IsOptional()
+  mainGoal: string;
+}
+
+export class UpdateProfile implements updateProfile {
+  @IsObject()
+  @ValidateNested()
+  @Type(() => Personalize)
+  @IsOptional()
+  @ApiPropertyOptional({ type: Personalize })
+  personalize?: personalize;
+
+  @IsString()
+  @IsOptional()
+  @ApiPropertyOptional({ type: String })
+  fullName: string;
+
+  @IsString()
+  @IsOptional()
+  @ApiPropertyOptional({ type: String })
+  bio?: string;
+
+  @IsString()
+  @IsOptional()
+  @ApiPropertyOptional({ type: String })
+  avatarUrl?: string;
+
+  @IsOptional()
+  @IsString()
+  @ApiPropertyOptional({ type: String })
+  username?: string;
+}
+
+export class CreateUser implements createUser {
+  @IsString()
+  @IsNotEmpty()
+  @ApiProperty({ type: String })
+  fullName: string;
+
+  @IsEmail()
+  @IsString()
+  @IsNotEmpty()
+  @ApiProperty({ type: String })
+  email: string;
+
+  @IsString()
+  @ApiProperty({ type: String, enum: Object.values(Role) })
+  @IsIn([Role.admin, Role.marketer, Role.pro, Role.publish])
+  role: Role;
+
+  @IsInt()
+  @ApiProperty({ type: Number })
+  @IsIn([2, 3])
+  @Transform(({ value }: { value: string }) => parseInt(value, 10))
+  roleLevel: number;
+
+  @IsOptional()
+  @IsIn(Object.values(userType))
+  type: userType = userType.internal;
+}
+
+export class TwoFaToken {
+  @IsString()
+  @IsNotEmpty()
+  @ApiProperty({ type: String })
+  token: string;
+}
+
+export class CTP implements ctp {
+  @IsString()
+  @MaxLength(4)
+  @IsNotEmpty()
+  @ApiProperty({ type: 'string' })
+  pin: string;
+}
+
+export class ChangePin implements changePin {
+  @IsString()
+  @MaxLength(4)
+  @IsNotEmpty()
+  @ApiProperty({ type: 'string', example: 1234 })
+  oldPin: string;
+
+  @IsString()
+  @MaxLength(4)
+  @IsNotEmpty()
+  @ApiProperty({ type: 'string', example: 1234 })
+  newPin: string;
+}

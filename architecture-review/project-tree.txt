@@ -1,0 +1,238 @@
+.
+├── Procfile
+├── app
+│   ├── __init__.py
+│   ├── __pycache__
+│   │   ├── __init__.cpython-313.pyc
+│   │   ├── analytics.cpython-313.pyc
+│   │   ├── assessment_service.cpython-313.pyc
+│   │   ├── business_context.cpython-313.pyc
+│   │   ├── classifier.cpython-313.pyc
+│   │   ├── coverage.cpython-313.pyc
+│   │   ├── decision.cpython-313.pyc
+│   │   ├── decision_service.cpython-313.pyc
+│   │   ├── executive.cpython-313.pyc
+│   │   ├── governance.cpython-313.pyc
+│   │   ├── inventory.cpython-313.pyc
+│   │   ├── main.cpython-313.pyc
+│   │   ├── readiness.cpython-313.pyc
+│   │   ├── recommendations.cpython-313.pyc
+│   │   ├── regulatory.cpython-313.pyc
+│   │   ├── report.cpython-313.pyc
+│   │   ├── risk.cpython-313.pyc
+│   │   ├── roadmap.cpython-313.pyc
+│   │   └── scanner.cpython-313.pyc
+│   ├── analytics.py
+│   ├── assessment_service.py
+│   ├── business_context.py
+│   ├── classifier.py
+│   ├── coverage.py
+│   ├── decision.py
+│   ├── decision_service.py
+│   ├── executive.py
+│   ├── governance.py
+│   ├── inventory.py
+│   ├── main.py
+│   ├── pdf_report.py
+│   ├── readiness.py
+│   ├── recommendations.py
+│   ├── regulatory.py
+│   ├── report.py
+│   ├── risk.py
+│   ├── roadmap.py
+│   └── scanner.py
+├── architecture-review
+│   └── project-tree.txt
+├── archive
+│   ├── app_backup_20260628
+│   │   ├── __init__.py
+│   │   ├── __pycache__
+│   │   ├── analytics.py
+│   │   ├── assessment_service.py
+│   │   ├── business_context.py
+│   │   ├── classifier.py
+│   │   ├── coverage.py
+│   │   ├── decision.py
+│   │   ├── decision_service.py
+│   │   ├── executive.py
+│   │   ├── governance.py
+│   │   ├── inventory.py
+│   │   ├── main.py
+│   │   ├── pdf_report.py
+│   │   ├── readiness.py
+│   │   ├── recommendations.py
+│   │   ├── regulatory.py
+│   │   ├── report.py
+│   │   ├── risk.py
+│   │   ├── roadmap.py
+│   │   └── scanner.py
+│   ├── dashboard_backup_20260628
+│   │   ├── __pycache__
+│   │   ├── app.py
+│   │   ├── command_center_preview.py
+│   │   ├── components
+│   │   ├── dashboard.py
+│   │   ├── dashboard_backup_v4.py
+│   │   ├── dashboard_smooth.py
+│   │   ├── dashboard_smooth_backup_start.py
+│   │   ├── dashboard_v10_before_scan_control.py
+│   │   ├── dashboard_v10_command_center.py
+│   │   ├── dashboard_v11_enterprise.py
+│   │   ├── dashboard_v12_legacy.py
+│   │   ├── dashboard_v12_presentation.py
+│   │   ├── dashboard_v12_presentation_v3_backup.py
+│   │   ├── dashboard_v20_enterprise.py
+│   │   ├── dashboard_v9_working.py
+│   │   ├── design_system.py
+│   │   ├── product.py
+│   │   └── theme.py
+│   └── research_notes_backup_20260628
+│       ├── 001-keyword-based-discovery-limitations.md
+│       ├── 002-cryptographic-asset-classification.md
+│       ├── 003-from-classification-to-coverage.md
+│       ├── 004-governance-aware-pqc-migration.md
+│       ├── 005-coverage-assessment-as-a-missing-layer.md
+│       ├── 006-migration-decision-support-as-the-next-layer.md
+│       ├── 007-runtime-orchestration-as-the-foundation-of-governance-aware-pqc-migration.md
+│       ├── 008-explainable-decision-pipelines-for-governance-aware-pqc-migration.md
+│       └── pqc-migration-roadmap.md
+├── dashboard
+│   ├── __pycache__
+│   │   ├── app.cpython-313.pyc
+│   │   ├── command_center_preview.cpython-313.pyc
+│   │   ├── dashboard.cpython-313.pyc
+│   │   ├── dashboard_smooth.cpython-313.pyc
+│   │   ├── dashboard_v10_command_center.cpython-313.pyc
+│   │   ├── dashboard_v12_presentation.cpython-313.pyc
+│   │   ├── design_system.cpython-313.pyc
+│   │   ├── product.cpython-313.pyc
+│   │   └── theme.cpython-313.pyc
+│   ├── app.py
+│   ├── command_center_preview.py
+│   ├── components
+│   │   ├── __pycache__
+│   │   ├── app_state.py
+│   │   ├── assessment_manager.py
+│   │   ├── assessment_runner.py
+│   │   ├── assessment_status.py
+│   │   ├── command_center.py
+│   │   ├── command_header.py
+│   │   ├── decision_engine.py
+│   │   ├── enterprise_intelligence.py
+│   │   ├── executive_header.py
+│   │   ├── executive_health.py
+│   │   ├── executive_kpis.py
+│   │   ├── executive_panel.py
+│   │   ├── landing.py
+│   │   ├── progress.py
+│   │   ├── progress_v1_backup.py
+│   │   ├── progress_v2_backup.py
+│   │   ├── reasoning_chain.py
+│   │   ├── soc_events.py
+│   │   ├── soc_findings.py
+│   │   ├── soc_header.py
+│   │   ├── soc_pipeline.py
+│   │   ├── status_card.py
+│   │   ├── summary.py
+│   │   └── wizard.py
+│   ├── dashboard.py
+│   ├── dashboard_backup_v4.py
+│   ├── dashboard_smooth.py
+│   ├── dashboard_smooth_backup_start.py
+│   ├── dashboard_v10_before_scan_control.py
+│   ├── dashboard_v10_command_center.py
+│   ├── dashboard_v11_enterprise.py
+│   ├── dashboard_v12_legacy.py
+│   ├── dashboard_v12_presentation.py
+│   ├── dashboard_v12_presentation_v3_backup.py
+│   ├── dashboard_v20_enterprise.py
+│   ├── dashboard_v9_working.py
+│   ├── design_system.py
+│   ├── product.py
+│   └── theme.py
+├── demo
+│   └── reference-financial-backend
+│       ├── Dockerfile
+│       ├── README.md
+│       ├── docker-compose.yml
+│       ├── eslint.config.mjs
+│       ├── guide.pdf
+│       ├── k8s
+│       ├── kubectl .follow
+│       ├── nest-cli.json
+│       ├── package-lock.json
+│       ├── package.json
+│       ├── recovery_file.dat
+│       ├── recovery_file_1762270846537.dat
+│       ├── src
+│       ├── test
+│       ├── tsconfig.build.json
+│       └── tsconfig.json
+├── docs
+│   ├── architecture
+│   │   └── EQMP_Software_Architecture_Specification_v1.0.md
+│   ├── design
+│   │   └── README.md
+│   ├── research-notes
+│   │   └── README.md
+│   └── specifications
+│       └── README.md
+├── inventory.json
+├── pqc-migration-engine.zip
+├── reports
+│   ├── pqc_executive_report.pdf
+│   └── pqc_report.txt
+├── requirements.txt
+├── research-notes
+│   ├── 001-keyword-based-discovery-limitations.md
+│   ├── 002-cryptographic-asset-classification.md
+│   ├── 003-from-classification-to-coverage.md
+│   ├── 004-governance-aware-pqc-migration.md
+│   ├── 005-coverage-assessment-as-a-missing-layer.md
+│   ├── 006-migration-decision-support-as-the-next-layer.md
+│   ├── 007-runtime-orchestration-as-the-foundation-of-governance-aware-pqc-migration.md
+│   ├── 008-explainable-decision-pipelines-for-governance-aware-pqc-migration.md
+│   └── pqc-migration-roadmap.md
+├── scans
+├── snapshots
+│   ├── streple-backend-governance-report-v1.txt
+│   └── streple-backend-inventory-v1.json
+├── test-target
+│   └── payment_api.txt
+└── venv
+    ├── bin
+    │   ├── Activate.ps1
+    │   ├── activate
+    │   ├── activate.csh
+    │   ├── activate.fish
+    │   ├── f2py
+    │   ├── idna
+    │   ├── jsonschema
+    │   ├── markdown-it
+    │   ├── normalizer
+    │   ├── numpy-config
+    │   ├── pip
+    │   ├── pip3
+    │   ├── pip3.13
+    │   ├── plotly_get_chrome
+    │   ├── pygmentize
+    │   ├── python -> python3
+    │   ├── python3 -> /usr/bin/python3
+    │   ├── python3.13 -> python3
+    │   ├── streamlit
+    │   ├── typer
+    │   ├── uvicorn
+    │   ├── watchmedo
+    │   └── websockets
+    ├── etc
+    │   └── jupyter
+    ├── include
+    │   └── python3.13
+    ├── lib
+    │   └── python3.13
+    ├── lib64 -> lib
+    ├── pyvenv.cfg
+    └── share
+        └── jupyter
+
+41 directories, 195 files

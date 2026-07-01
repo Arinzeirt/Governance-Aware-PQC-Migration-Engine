@@ -17,3 +17,14 @@ scans/
 
 # OS
 .DS_Store
+
+# Archives
+*.zip
+
+# Local archives
+archive/
+
+# Python
+__pycache__/
+*.pyc
+
