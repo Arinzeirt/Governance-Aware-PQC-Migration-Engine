@@ -16,21 +16,24 @@ st.set_page_config(
 )
 
 #
-# Load Enet Design System
+# Load Design System
 #
 load_design()
 
 #
-# Initialize Application State
+# Initialize Session
 #
 initialize_app_state()
 
 #
-# Session Defaults
+# Application State
 #
 if "screen" not in st.session_state:
     st.session_state.screen = "launch_portal"
 
+#
+# Navigation State
+#
 if "page" not in st.session_state:
     st.session_state.page = "dashboard"
 

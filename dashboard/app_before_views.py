@@ -4,8 +4,7 @@ from design_system import load_design
 
 from components.app_state import initialize_app_state
 from components.launch_portal import show as show_launch_portal
-
-from layouts.shell import show as show_shell
+from components.v1_command_center import show as show_command_center
 
 
 st.set_page_config(
@@ -16,26 +15,20 @@ st.set_page_config(
 )
 
 #
-# Load Enet Design System
+# Load EQMP Design System
 #
 load_design()
 
 #
-# Initialize Application State
+# Initialize Session State
 #
 initialize_app_state()
 
-#
-# Session Defaults
-#
 if "screen" not in st.session_state:
     st.session_state.screen = "launch_portal"
 
-if "page" not in st.session_state:
-    st.session_state.page = "dashboard"
-
 #
-# Application Router
+# ROUTER
 #
 if st.session_state.screen == "launch_portal":
 
@@ -47,10 +40,11 @@ if st.session_state.screen == "launch_portal":
 
 elif st.session_state.screen == "command_center":
 
-    show_shell()
+    show_command_center()
 
 else:
 
     st.session_state.screen = "launch_portal"
 
     st.rerun()
+

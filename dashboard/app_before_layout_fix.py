@@ -5,7 +5,7 @@ from design_system import load_design
 from components.app_state import initialize_app_state
 from components.launch_portal import show as show_launch_portal
 
-from layouts.shell import show as show_shell
+from layout.shell import show as show_shell
 
 
 st.set_page_config(
@@ -16,21 +16,24 @@ st.set_page_config(
 )
 
 #
-# Load Enet Design System
+# Load Design System
 #
 load_design()
 
 #
-# Initialize Application State
+# Initialize Session
 #
 initialize_app_state()
 
 #
-# Session Defaults
+# Application State
 #
 if "screen" not in st.session_state:
     st.session_state.screen = "launch_portal"
 
+#
+# Navigation State
+#
 if "page" not in st.session_state:
     st.session_state.page = "dashboard"
 

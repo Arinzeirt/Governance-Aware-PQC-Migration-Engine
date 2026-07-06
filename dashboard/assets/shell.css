@@ -1,0 +1,67 @@
+:root{
+
+    --enet-primary:#002245;
+
+    --enet-surface:#111827;
+
+    --enet-surface-2:#172033;
+
+    --enet-border:#2B3548;
+
+    --enet-text:#FFFFFF;
+
+    --enet-muted:#94A3B8;
+
+    --enet-success:#22C55E;
+
+    --radius:20px;
+
+}
+
+html,
+body,
+[data-testid="stAppViewContainer"]{
+
+    background:var(--enet-primary);
+
+}
+
+section[data-testid="stSidebar"]{
+
+    background:var(--enet-surface);
+
+    border-right:1px solid var(--enet-border);
+
+}
+
+div.stButton > button{
+
+    width:100%;
+
+    border-radius:12px;
+
+    border:none;
+
+    background:transparent;
+
+    color:var(--enet-text);
+
+    text-align:left;
+
+    padding:12px 14px;
+
+    transition:all .3s ease-in-out;
+
+}
+
+div.stButton > button:hover{
+
+    background:#0A3A73;
+
+}
+
+hr{
+
+    border-color:var(--enet-border);
+
+}
