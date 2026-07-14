@@ -1,51 +1,129 @@
 import streamlit as st
 
 
-def show_executive_summary(runtime):
+def show():
 
-    st.success("✅ Enterprise Assessment Completed")
-
-    st.markdown("## Executive Overview")
-
-    c1, c2, c3, c4, c5 = st.columns(5)
-
-    with c1:
-        st.metric(
-            "Overall Risk",
-            "HIGH"
-        )
-
-    with c2:
-        st.metric(
-            "Readiness",
-            "18%"
-        )
-
-    with c3:
-        st.metric(
-            "Assets",
-            "573"
-        )
-
-    with c4:
-        st.metric(
-            "Compliance",
-            "ACTION REQUIRED"
-        )
-
-    with c5:
-        st.metric(
-            "Confidence",
-            "92%"
-        )
-
-    st.info(
+    st.markdown(
         """
-The assessment indicates significant use of traditional
-public-key cryptography across business-critical systems.
+<div style="
+background:#111827;
+border:1px solid #334155;
+border-radius:14px;
+padding:24px;
+margin-bottom:22px;
+">
 
-A governance-led phased migration strategy is recommended
-to improve post-quantum readiness while maintaining
-business continuity.
-"""
+<div style="
+display:flex;
+justify-content:space-between;
+align-items:center;
+margin-bottom:18px;
+">
+
+<div>
+
+<div style="
+font-size:24px;
+font-weight:700;
+color:#F8FAFC;
+">
+
+Executive Summary
+
+</div>
+
+<div style="
+font-size:14px;
+color:#94A3B8;
+">
+
+Governance-Aware Post-Quantum Readiness
+
+</div>
+
+</div>
+
+<div style="
+background:#065F46;
+color:white;
+padding:8px 14px;
+border-radius:999px;
+font-size:13px;
+font-weight:600;
+">
+
+🟢 Assessment Complete
+
+</div>
+
+</div>
+
+<div style="
+font-size:16px;
+line-height:1.8;
+color:#E2E8F0;
+margin-bottom:20px;
+">
+
+Your enterprise has significant exposure to cryptographic assets that
+require migration planning before the quantum threat becomes operational.
+
+</div>
+
+<div style="
+font-size:15px;
+font-weight:700;
+color:#F8FAFC;
+margin-bottom:10px;
+">
+
+Primary Governance Recommendation
+
+</div>
+
+<div style="
+font-size:15px;
+line-height:1.7;
+color:#CBD5E1;
+margin-bottom:24px;
+">
+
+Begin a phased, governance-led cryptographic transformation programme
+focused on business-critical systems, externally exposed services,
+and regulatory assets.
+
+</div>
+
+<hr style="
+border:none;
+border-top:1px solid #334155;
+margin:20px 0;
+">
+
+<div style="
+display:grid;
+grid-template-columns:220px 1fr;
+row-gap:12px;
+column-gap:20px;
+font-size:14px;
+">
+
+<div style="color:#94A3B8;"><strong>Assessment Scope</strong></div>
+<div style="color:#E2E8F0;">Enterprise Infrastructure</div>
+
+<div style="color:#94A3B8;"><strong>Analysis Type</strong></div>
+<div style="color:#E2E8F0;">
+Cryptographic Inventory & Readiness Assessment
+</div>
+
+<div style="color:#94A3B8;"><strong>Recommendation</strong></div>
+<div style="color:#E2E8F0;">
+Governance-Led Phased Migration
+</div>
+
+</div>
+
+</div>
+""",
+        unsafe_allow_html=True,
     )

@@ -1,24 +1,33 @@
-"""
-Enet Design System
-
-CSS Loader
-"""
-
-from pathlib import Path
 import streamlit as st
 
 
 def load():
-    """
-    Load the Enet Design System CSS.
-    """
 
-    css_file = Path("dashboard/assets/shell.css")
+    st.markdown(
+        """
+<style>
 
-    if css_file.exists():
+/* ---------- MAIN LAYOUT ---------- */
 
-        st.markdown(
-            f"<style>{css_file.read_text()}</style>",
-            unsafe_allow_html=True,
-        )
+.block-container{
 
+    padding-top:0.45rem;
+
+    padding-bottom:2rem;
+
+    max-width:1500px;
+
+}
+
+/* Hide Streamlit's default spacing */
+
+[data-testid="stHeader"]{
+
+    background:transparent;
+
+}
+
+</style>
+""",
+        unsafe_allow_html=True,
+    )

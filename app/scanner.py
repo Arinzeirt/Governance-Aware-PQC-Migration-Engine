@@ -4,6 +4,10 @@ import re
 from classifier import classify_content
 
 
+#
+# Cryptographic Patterns
+#
+
 CRYPTO_PATTERNS = {
     "RSA": r"\bRSA\b",
     "ECC": r"\bECC\b",
@@ -15,50 +19,244 @@ CRYPTO_PATTERNS = {
     "SHA1": r"\bSHA1\b",
     "SHA-1": r"\bSHA-1\b",
     "SHA256": r"\bSHA256\b",
-    "SHA-256": r"\bSHA-256\b"
+    "SHA-256": r"\bSHA-256\b",
 }
 
 
-def scan_directory(directory, max_findings=None):
+#
+# Directories ignored during assessment
+#
+
+IGNORED_DIRECTORIES = {
+
+    ".git",
+    ".github",
+
+    "node_modules",
+
+    "dist",
+    "build",
+    "coverage",
+
+    ".next",
+    ".nuxt",
+
+    "__pycache__",
+
+    "venv",
+    ".venv",
+
+    ".idea",
+    ".vscode",
+
+    "vendor",
+
+}
+
+
+#
+# File extensions we actually want
+#
+
+SOURCE_EXTENSIONS = {
+
+    ".py",
+    ".js",
+    ".ts",
+    ".tsx",
+
+    ".java",
+    ".kt",
+
+    ".cs",
+
+    ".go",
+
+    ".cpp",
+    ".cc",
+    ".c",
+    ".h",
+
+    ".php",
+
+    ".rb",
+
+    ".rs",
+
+    ".swift",
+
+    ".json",
+
+    ".yaml",
+    ".yml",
+
+    ".xml",
+
+    ".properties",
+
+    ".env",
+
+}
+
+
+def should_scan(file: Path):
+
+    #
+    # Ignore folders
+    #
+
+    if any(
+
+        part in IGNORED_DIRECTORIES
+
+        for part in file.parts
+
+    ):
+
+        return False
+
+    #
+    # Ignore large binary assets
+    #
+
+    if file.suffix.lower() not in SOURCE_EXTENSIONS:
+
+        return False
+
+    return True
+
+
+def scan_directory(
+
+    directory,
+
+    max_findings=None,
+
+    callback=None,
+
+):
 
     findings = {}
 
     finding_count = 0
 
-    for file in Path(directory).rglob("*"):
+    files = [
 
-        if not file.is_file():
-            continue
+        f
+
+        for f in Path(directory).rglob("*")
+
+        if f.is_file()
+
+        and should_scan(f)
+
+    ]
+
+    total_files = len(files)
+
+    for index, file in enumerate(
+
+        files,
+
+        start=1,
+
+    ):
+
+        if callback:
+
+            callback(
+
+                event="file",
+
+                file=str(file),
+
+                current=index,
+
+                total=total_files,
+
+            )
 
         try:
 
-            content = file.read_text(errors="ignore")
+            content = file.read_text(
+
+                errors="ignore"
+
+            )
 
             matches = []
 
+            #
+            # Keyword Detection
+            #
+
             for keyword, pattern in CRYPTO_PATTERNS.items():
 
-                if re.search(pattern, content):
+                if re.search(
 
-                    matches.append({
+                    pattern,
 
-                        "type": "keyword",
+                    content,
 
-                        "value": keyword
+                ):
 
-                    })
+                    matches.append(
 
-            classifications = classify_content(content)
+                        {
 
-            for item in classifications:
+                            "type": "keyword",
 
-                matches.append({
+                            "value": keyword,
 
-                    "type": "classification",
+                        }
 
-                    "value": item
+                    )
 
-                })
+                    if callback:
+
+                        callback(
+
+                            event="keyword",
+
+                            keyword=keyword,
+
+                            file=str(file),
+
+                        )
+
+            #
+            # Classification
+            #
+
+            for item in classify_content(
+
+                content
+
+            ):
+
+                matches.append(
+
+                    {
+
+                        "type": "classification",
+
+                        "value": item,
+
+                    }
+
+                )
+
+                if callback:
+
+                    callback(
+
+                        event="classification",
+
+                        classification=item["classification"],
+
+                        file=str(file),
+
+                    )
 
             if matches:
 
@@ -66,14 +264,19 @@ def scan_directory(directory, max_findings=None):
 
                 finding_count += len(matches)
 
-                if (
-                    max_findings is not None
-                    and finding_count >= max_findings
-                ):
-                    break
+            if (
+
+                max_findings
+
+                and finding_count >= max_findings
+
+            ):
+
+                break
 
         except Exception:
 
             continue
 
     return findings
+

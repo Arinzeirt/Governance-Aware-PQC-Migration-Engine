@@ -1,11 +1,11 @@
-from pages.dashboard import show as dashboard
-from pages.assessment import show as assessment
-from pages.migration import show as migration
-from pages.reports import show as reports
-from pages.inventory import show as inventory
-from pages.repository import show as repository
-from pages.research import show as research
-from pages.about import show as about
+from views.dashboard import show as dashboard
+from views.assessment import show as assessment
+from views.migration import show as migration
+from views.reports import show as reports
+from views.inventory import show as inventory
+from views.repository import show as repository
+from views.research import show as research
+from views.about import show as about
 
 
 ROUTES = {
@@ -21,4 +21,8 @@ ROUTES = {
 
 
 def render(page):
-    ROUTES.get(page, dashboard)()
+
+    ROUTES.get(
+        page,
+        dashboard
+    )()

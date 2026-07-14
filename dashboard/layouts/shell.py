@@ -1,13 +1,11 @@
 import streamlit as st
 
-from controllers.navigation import render
+from layouts.workspace import show as show_workspace
 
 
 def show():
 
     #
-    # Render Current Page
+    # Enterprise Workspace
     #
-    render(
-        st.session_state.page
-    )
+    show_workspace()
