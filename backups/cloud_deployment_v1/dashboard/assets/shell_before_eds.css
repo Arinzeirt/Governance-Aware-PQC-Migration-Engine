@@ -1,0 +1,53 @@
+.shell-sidebar {
+
+    position: fixed;
+
+    top: 0;
+
+    left: 0;
+
+    width: 260px;
+
+    height: 100vh;
+
+    background: #0F172A;
+
+    border-right: 1px solid #1E293B;
+
+    overflow: auto;
+
+    z-index: 1000;
+
+}
+
+.shell-content {
+
+    margin-left: 260px;
+
+    padding: 24px;
+
+}
+
+.shell-footer {
+
+    border-top: 1px solid #1E293B;
+
+    padding: 18px;
+
+    color: #94A3B8;
+
+}
+
+.shell-title {
+
+    font-size: 13px;
+
+    text-transform: uppercase;
+
+    color: #64748B;
+
+    margin-top: 22px;
+
+    margin-bottom: 8px;
+
+}
