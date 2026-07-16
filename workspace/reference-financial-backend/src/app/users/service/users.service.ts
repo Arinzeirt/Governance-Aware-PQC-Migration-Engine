@@ -1,0 +1,497 @@
+import { ForgotPasswordDto } from '@app/auth/dto/forgot-password.dto';
+import { ResendOtpDto, VerifyOtpDto } from '@app/auth/dto/otp.dto';
+import { ResetPasswordDto } from '@app/auth/dto/reset-password.dto';
+import { SignupDto } from '@app/auth/dto/signup.dto';
+import { AuthUser, Document, DocumentResult } from '@app/common';
+import {
+  buildFindManyQuery,
+  FindManyWrapper,
+  FindOneWrapper,
+} from '@app/helpers';
+import { MailService, template } from '@app/services';
+import {
+  BadRequestException,
+  ForbiddenException,
+  Injectable,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
+import { OnEvent } from '@nestjs/event-emitter';
+import { InjectRepository } from '@nestjs/typeorm';
+import * as bcrypt from 'bcrypt';
+import { customAlphabet } from 'nanoid';
+import { Repository, TypeORMError } from 'typeorm';
+import { ChangePasswordDto } from '../dto/change-password.dto';
+import { RoleModel, User, UserActivity } from '../entity';
+import {
+  authType,
+  changePin,
+  createUser,
+  ctp,
+  findManyUser,
+  findOneUser,
+  IUser,
+  Role,
+  updateProfile,
+  userType,
+} from '../interface';
+import { UserScheduleService } from './user-schdule.service';
+
+@Injectable()
+export class UsersService {
+  constructor(
+    @InjectRepository(User) private readonly repo: Repository<User>,
+    @InjectRepository(RoleModel)
+    private readonly roleModel: Repository<RoleModel>,
+    @InjectRepository(UserActivity)
+    private readonly userActivityRepository: Repository<UserActivity>,
+    private readonly mailer: MailService,
+    private readonly walletJob: UserScheduleService,
+  ) {}
+
+  async createUser(dto: SignupDto) {
+    try {
+      const user = this.repo.create({ ...dto, email: dto.email.toLowerCase() });
+      user.password = await bcrypt.hash(dto.password, 10);
+      const otp = Math.floor(100000 + Math.random() * 900000).toString();
+      user.otp = otp;
+      user.otpExpiresAt = new Date(Date.now() + 10 * 60 * 1000); // 10 mins
+
+      const role = await this.roleModel.findOne({
+        where: { name: Role.follower },
+      });
+
+      if (role) user.roles = role;
+
+      const data = await this.repo.save({
+        ...user,
+        auth_type: authType.email,
+        type: userType.external,
+        roleLevel: 1,
+        refercode: this.generateReferralCode(),
+      });
+
+      await this.mailer.sendMail(
+        user.email,
+        template.reg,
+        'Verify Your Email Address to Complete Registration',
+        { otp, username: user.fullName, currentYear: new Date().getFullYear() },
+      );
+
+      return {
+        message: 'OTP sent to your email',
+        email: user.email,
+        id: data.id,
+      };
+    } catch (error) {
+      if (error.code !== '23505') {
+        throw new BadRequestException('duplicate information detected');
+      }
+    }
+  }
+
+  async createUserWithGoogle(dto: SignupDto): Promise<User> {
+    const user = this.repo.create({ ...dto, email: dto.email.toLowerCase() });
+    user.password = await bcrypt.hash(dto.password, 10);
+    user.isVerified = true;
+    const role = await this.roleModel.findOne({
+      where: { name: Role.follower },
+    });
+
+    if (role) user.roles = role;
+
+    return this.repo.save({
+      ...user,
+      type: userType.external,
+      roleLevel: 1,
+      auth_type: authType.oath,
+      refercode: this.generateReferralCode(),
+    });
+  }
+
+  async createAdmin(dto: createUser) {
+    try {
+      const adminExists = await this.findByEmail(dto.email.toLowerCase());
+      if (adminExists) throw new BadRequestException('Admin already exists');
+
+      const pass = this.generatePassword(10);
+      const password = await bcrypt.hash(pass, 10);
+      const role = await this.roleModel.findOne({ where: { name: dto.role } });
+      if (role) dto.roles = role;
+
+      dto.email = dto.email.toLowerCase();
+      const admin = this.repo.create({
+        ...dto,
+        isVerified: true,
+        otpVerified: true,
+        password,
+        auth_type: authType.email,
+        type: role?.name !== Role.pro ? userType.internal : userType.external,
+      });
+
+      await this.repo.save(admin);
+      await this.mailer.sendMail(
+        dto.email,
+        template.admin,
+        `Welcome dear ${dto.role?.toLowerCase()}`,
+        {
+          username: dto.fullName,
+          email: dto.email,
+          password: pass,
+          login_url: '',
+          currentYear: new Date().getFullYear(),
+        },
+      );
+      return { message: 'Admin account created successfully' };
+    } catch (error) {
+      if (error.code !== '23505') {
+        throw new BadRequestException('duplicate information detected');
+      }
+    }
+  }
+
+  async login(email: string) {
+    return this.repo
+      .createQueryBuilder('user')
+      .addSelect('user.password')
+      .addSelect('user.tfaSecret')
+      .addSelect('user.transactionPin')
+      .where('user.email = :email', { email: email.toLowerCase() })
+      .getOne();
+  }
+
+  async findByEmail(email: string): Promise<User | null> {
+    return this.repo.findOne({ where: { email: email.toLowerCase() } });
+  }
+
+  async verifyEmail(dto: VerifyOtpDto) {
+    const user = await this.findByEmail(dto.email);
+    if (!user) throw new NotFoundException('User not found');
+    if (user.isVerified) {
+      throw new BadRequestException('Email already verified');
+    }
+    if (!user.otp || dto.otp !== user.otp) {
+      throw new BadRequestException('Invalid OTP');
+    }
+    if (!user.otpExpiresAt || user.otpExpiresAt < new Date()) {
+      throw new BadRequestException('OTP expired');
+    }
+
+    user.isVerified = true;
+    user.otp = null;
+    user.otpExpiresAt = null;
+    await this.repo.save(user);
+
+    // TODO: schedule wallet creation jobs
+    this.walletJob.createCryptoAccount(user);
+    // this.walletJob.createVirtualAccount(user, delay);
+
+    return { message: 'Email verified successfully' };
+  }
+
+  async resendOtp(dto: ResendOtpDto) {
+    const user = await this.findByEmail(dto.email);
+    if (!user) throw new NotFoundException('User not found');
+    if (user.otpVerified) throw new BadRequestException('OTP already verified');
+
+    const newOtp = Math.floor(100000 + Math.random() * 900000).toString();
+    user.otp = newOtp;
+    user.otpExpiresAt = new Date(Date.now() + 10 * 60 * 1000);
+    user.otpVerified = false;
+    await this.repo.save(user);
+
+    await this.mailer.sendMail(
+      user.email,
+      template.resend,
+      'Streple otp request',
+      {
+        otp: newOtp,
+        username: user.fullName,
+        currentYear: new Date().getFullYear(),
+      },
+    ); //Service.sendOtpEmail(user.email, newOtp, dto.purpose);
+    return { message: 'OTP resent', email: user.email };
+  }
+
+  async forgotPassword(dto: ForgotPasswordDto) {
+    const user = await this.findByEmail(dto.email);
+    if (!user) throw new NotFoundException('User not found');
+
+    const otp = Math.floor(100000 + Math.random() * 900000).toString();
+    user.otp = otp;
+    user.otpExpiresAt = new Date(Date.now() + 10 * 60 * 1000);
+    user.otpVerified = false;
+    await this.repo.save(user);
+
+    await this.mailer.sendMail(
+      user.email,
+      template.reset,
+      'Password Reset Request',
+      { username: user.fullName, otp, currentYear: new Date().getFullYear() },
+    );
+    return { message: 'OTP sent to your email', email: user.email };
+  }
+
+  async verifyOtp(dto: VerifyOtpDto) {
+    const user = await this.findByEmail(dto.email);
+    if (!user) throw new NotFoundException('User not found');
+    if (user.otpVerified) throw new BadRequestException('OTP already verified');
+    if (!user.otp || dto.otp !== user.otp)
+      throw new BadRequestException('Invalid OTP');
+    if (!user.otpExpiresAt || user.otpExpiresAt < new Date())
+      throw new BadRequestException('OTP expired');
+
+    user.otp = null;
+    user.otpExpiresAt = null;
+    user.otpVerified = true;
+    await this.repo.save(user);
+
+    return { message: 'OTP verified successfully' };
+  }
+
+  async resetPassword(dto: ResetPasswordDto) {
+    const user = await this.findByEmail(dto.email);
+    if (!user) throw new NotFoundException('User not found');
+    if (!user.otpVerified) throw new UnauthorizedException('OTP not verified');
+
+    user.password = await bcrypt.hash(dto.newPassword, 10);
+    await this.repo.save(user);
+
+    return { message: 'Your password has been reset successfully' };
+  }
+
+  async changePassword(dto: ChangePasswordDto) {
+    const user = await this.login(dto.email);
+    if (!user) throw new NotFoundException('User not found');
+
+    const isMatch = await bcrypt.compare(dto.currentPassword, user.password);
+    if (!isMatch) {
+      throw new BadRequestException('Current password is incorrect');
+    }
+
+    user.password = await bcrypt.hash(dto.newPassword, 10);
+    await this.repo.save(user);
+    return { message: 'Password changed successfully' };
+  }
+
+  async createTransactionPin(
+    dto: ctp,
+    user: AuthUser,
+  ): Promise<{ message: string }> {
+    try {
+      const findUser = await this.login(user.email);
+      if (!findUser) {
+        throw new ForbiddenException('User account not found');
+      }
+
+      if (findUser.transactionPin) {
+        throw new ForbiddenException(
+          'Transaction pin already created for this account',
+        );
+      }
+
+      const hashPin = await bcrypt.hash(dto.pin, 10);
+      findUser.transactionPin = hashPin;
+      findUser.hasTransactionPin = true;
+      await this.repo.save(findUser);
+      return { message: 'Pin set successfully' };
+    } catch (error) {
+      if (error instanceof TypeORMError) {
+        throw new BadRequestException(error.message);
+      }
+      throw error;
+    }
+  }
+
+  async changeTransactionPin(
+    dto: changePin,
+    user: AuthUser,
+  ): Promise<{ message: string }> {
+    try {
+      const findUser = await this.login(user.email);
+      if (!findUser) throw new ForbiddenException('Account not found');
+
+      if (!findUser.transactionPin) {
+        throw new ForbiddenException('Incorrect password');
+      }
+
+      const isMatch = await bcrypt.compare(dto.oldPin, findUser.transactionPin);
+      if (!isMatch) throw new ForbiddenException('Incorrect password');
+
+      findUser.transactionPin = await bcrypt.hash(dto.newPin, 10);
+      await this.repo.save(findUser);
+      return { message: 'Pin change successfully' };
+    } catch (error) {
+      if (error instanceof TypeORMError) {
+        throw new BadRequestException(error.message);
+      }
+      throw error;
+    }
+  }
+
+  async findMany(query: findManyUser): Promise<DocumentResult<User>> {
+    const { page, sort, limit, include, search, ...filter } = query;
+    const where = this.filter(filter);
+    const qb = this.repo.createQueryBuilder('user');
+
+    buildFindManyQuery(
+      qb,
+      'user',
+      where,
+      search,
+      ['fullName', 'email'],
+      include,
+      sort,
+    );
+
+    return FindManyWrapper(qb, page, limit);
+  }
+
+  async findOne(query: findOneUser): Promise<Document<User>> {
+    const { include, sort, ...filters } = query;
+
+    return FindOneWrapper<User>(this.repo, {
+      include,
+      sort,
+      filters,
+    });
+  }
+
+  async updateProfile(
+    data: updateProfile,
+    user: AuthUser,
+  ): Promise<IUser | undefined> {
+    try {
+      const findUser = await this.repo.findOne({ where: { id: user.id } });
+      if (!findUser) {
+        throw new ForbiddenException('User not found');
+      }
+
+      if (data.username) {
+        const existing = await this.repo.findOne({
+          where: { username: data.username },
+        });
+        if (existing) {
+          throw new ForbiddenException('Username already taken');
+        }
+      }
+
+      if (data.personalize) {
+        const personal = data.personalize;
+        if (personal.howFamiliar.trim() && personal.mainGoal.trim()) {
+          data.hasAnswer = true;
+        }
+      }
+      await this.repo.update({ id: user.id }, { ...data });
+
+      return { ...findUser, ...data };
+    } catch (error) {
+      if (error.code !== '23505') {
+        throw new BadRequestException('username already taken');
+      }
+    }
+  }
+
+  async deleteUser(id: string): Promise<{ message: string }> {
+    const user = await this.findOne({ id });
+    if (!user.data) {
+      throw new NotFoundException('user with this id not available');
+    }
+    await this.repo.delete({ id: user.data.id });
+    return { message: 'user deleted successfully' };
+  }
+
+  /* add convenience for stats updates, followers etc later */
+  private filter(query: findManyUser) {
+    const where: Record<string, any> = {};
+
+    if (query.email) {
+      where['email'] = query.email;
+    }
+
+    if (query.fullName) {
+      where['fullName'] = query.fullName;
+    }
+
+    if (query.isVerified) {
+      where['isVerified'] = query.isVerified;
+    }
+
+    if (query.type) {
+      where['type'] = query.type;
+    }
+
+    if (query.roleName) {
+      where['role'] = query.roleName;
+    }
+
+    if (query.username) {
+      where['username'] = query.username;
+    }
+
+    return where;
+  }
+
+  private generatePassword = (length: number = 10): string => {
+    const upperCase = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    const lowerCase = 'abcdefghijklmnopqrstuvwxyz';
+    const numbers = '0123456789';
+    const symbols = '!@#$%^&*()_+~`|}{[]:;?><,./-=';
+
+    if (length < 8) {
+      throw new Error('Password length must be at least 8 characters long.');
+    }
+
+    const allChars = upperCase + lowerCase + numbers + symbols;
+    let password = '';
+
+    password += upperCase[Math.floor(Math.random() * upperCase.length)];
+    password += lowerCase[Math.floor(Math.random() * lowerCase.length)];
+    password += numbers[Math.floor(Math.random() * numbers.length)];
+    password += symbols[Math.floor(Math.random() * symbols.length)];
+
+    for (let i = password.length; i < length; i++) {
+      password += allChars[Math.floor(Math.random() * allChars.length)];
+    }
+
+    password = password
+      .split('')
+      .sort(() => 0.5 - Math.random())
+      .join('');
+
+    return password;
+  };
+
+  private generateReferralCode(length = 8): string {
+    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+    let code = '';
+    for (let i = 0; i < length; i++) {
+      code += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+    return code;
+  }
+
+  private generate_uid(length: number): string {
+    const generator = customAlphabet(
+      'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789',
+      length,
+    );
+    return generator();
+  }
+
+  // user-activity.service.ts
+  @OnEvent('user.activity')
+  private async recordActivity(userId: string) {
+    const today = new Date().toISOString().split('T')[0];
+    const existing = await this.userActivityRepository.findOne({
+      where: { user: { id: userId }, date: today },
+    });
+
+    if (!existing) {
+      await this.userActivityRepository.save({
+        user: { id: userId },
+        date: today,
+      });
+    }
+  }
+}

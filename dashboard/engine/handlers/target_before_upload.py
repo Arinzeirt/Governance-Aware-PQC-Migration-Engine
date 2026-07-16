@@ -6,24 +6,27 @@ from engine.runtime import runtime
 from engine.stage import transition
 
 
-def execute(target_type, target):
+def execute(
+
+    target_type,
+
+    target,
+
+):
 
     transition(
+
         message="Resolving Assessment Target...",
+
         progress=15,
+
         stage="Target",
+
         delay=0.30,
+
     )
 
-    if target_type in (
-
-        "Local Directory",
-
-        "Upload ZIP Repository",
-
-        "Demo Repository",
-
-    ):
+    if target_type == "Local Directory":
 
         directory = manager.prepare_local(target)
 
@@ -34,19 +37,29 @@ def execute(target_type, target):
     else:
 
         raise ValueError(
-            f"Unsupported assessment target: {target_type}"
+
+            "Unsupported assessment target."
+
         )
 
     runtime.set_repository(
+
         name=os.path.basename(directory),
+
         repo_type=target_type,
+
     )
 
     transition(
+
         message="Repository Loaded",
+
         progress=25,
+
         stage="Target",
+
         delay=0.30,
+
     )
 
     return directory

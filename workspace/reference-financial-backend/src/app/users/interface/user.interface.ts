@@ -1,0 +1,169 @@
+import { findMany, findOne } from '@app/common';
+import { Roles } from './roles.interface';
+import { IWallets } from '@app/wallets/input';
+
+export enum Role {
+  follower = 'FOLLOWER',
+  pro = 'PRO_TRADER',
+  superAdmin = 'SUPER_ADMIN',
+  publish = 'PUBLISHER',
+  admin = 'ADMIN',
+  marketer = 'MARKETER',
+}
+
+export enum userStatus {
+  active = 'ACTIVE',
+  inactive = 'INACTIVE',
+}
+
+export enum gender {
+  male = 'MALE',
+  female = 'FEMALE',
+  others = 'OTHERS',
+}
+
+export enum authType {
+  oath = 'OAUTH',
+  email = 'EMAIL',
+}
+
+export enum userType {
+  internal = 'Internal',
+  external = 'External',
+}
+
+export type personalize = {
+  howFamiliar: string;
+  mainGoal: string;
+};
+
+export type quickStart = {
+  fundWallet: boolean;
+  firstTrade: boolean;
+};
+
+export interface IUser {
+  id: string;
+  fullName: string;
+  email: string;
+  password: string;
+  isVerified: boolean;
+  otp?: string | null;
+  otpExpiresAt?: Date | null;
+  role?: Role;
+  bio?: string;
+  auth_type: authType;
+  type: userType;
+  avatarUrl?: string;
+  username?: string;
+  hasAnswer: boolean;
+  status: userStatus;
+  gender: gender;
+  personalize?: personalize;
+  quickStart: quickStart;
+  isTfaEnabled?: boolean;
+  tfaSecret?: string;
+  roleLevel: number;
+  roles: Roles;
+  wallets: IWallets[];
+  refercode?: string;
+  transactionPin?: string;
+  hasTransactionPin: boolean;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export type updateProfile = Partial<
+  Omit<IUser, 'email' | 'password' | 'role' | 'roleLevel' | 'roles'>
+>;
+
+export interface findManyUser extends findMany {
+  fullName?: string[];
+  email?: string[];
+  isVerified?: boolean[];
+  roleName?: string[];
+  privilege?: string[];
+  type?: string[];
+  username?: string[];
+}
+
+export interface findOneUser extends findOne {
+  fullName?: string;
+  email?: string;
+  refercode?: string;
+  username?: string;
+  role?: Role;
+}
+
+export interface createUser extends Pick<
+  IUser,
+  'email' | 'fullName' | 'role' | 'roleLevel' | 'type'
+> {
+  roles?: Roles;
+}
+
+export interface generate2FaPayload {
+  uri: string;
+  secret: string;
+}
+
+export interface initiateTfaEnabling {
+  secret: string;
+  email: string;
+}
+
+export interface ManageTfa {
+  email: string;
+  tfaToken: string;
+}
+
+export interface verifyTfaEnabling {
+  secret: string;
+  code: string;
+}
+
+export interface ctp {
+  pin: string;
+}
+
+export interface changePin {
+  oldPin: string;
+  newPin: string;
+}
+
+interface stats {
+  total: number;
+  change: number;
+  increase: boolean;
+}
+export interface dashStatsResponse {
+  totalUsers: number;
+  activeUser: stats;
+  copiers: stats;
+  proTraders: stats;
+}
+
+export interface dashboardFilter {
+  range: 'this year' | 'this week' | 'this month';
+  from?: Date;
+  to?: Date;
+}
+
+export interface Row {
+  month: string;
+  monthNumber: string;
+  active: string; // from COUNT(DISTINCT userId)
+  users: { id: string; role: Role }[]; // aggregated users
+}
+
+interface counter {
+  total: number;
+  Protraders: number;
+  followers: number;
+}
+export interface dashChartResponse {
+  label: string;
+  users: counter;
+  active: counter;
+  inactive: counter;
+}

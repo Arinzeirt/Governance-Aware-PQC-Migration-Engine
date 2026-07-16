@@ -1,0 +1,202 @@
+import { Document, DocumentResult } from '@app/common';
+import {
+  buildFindManyQuery,
+  FindManyWrapper,
+  FindOneWrapper,
+} from '@app/helpers';
+import {
+  BadRequestException,
+  Injectable,
+  Logger,
+  UnauthorizedException,
+} from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+import { EventEmitter2 } from '@nestjs/event-emitter';
+import { InjectRepository } from '@nestjs/typeorm';
+import { AxiosError } from 'axios';
+import * as crypto from 'crypto';
+import { Repository, TypeORMError } from 'typeorm';
+import { WebHookLog } from './entity';
+import { findManyEvent, findOneEvent } from './index';
+
+@Injectable()
+export class WebhooksService {
+  private readonly logger = new Logger(WebhooksService.name);
+  constructor(
+    @InjectRepository(WebHookLog)
+    private readonly webhookLog: Repository<WebHookLog>,
+    private readonly eventEmitter: EventEmitter2,
+    private readonly configService: ConfigService,
+  ) {}
+
+  async processCircleEvent(payload: Buffer, keyId: string, signature: string) {
+    try {
+      // catch the public key
+      // const { data } = await this.httpClient.get<PublicKeyResponse>({
+      //   uri: `https://api.circle.com/v2/notifications/publicKey/${keyId}`,
+      //   headers: {
+      //     Authorization: `Bearer ${this.configService.getOrThrow('CIRCLE_API_KEY')}`,
+      //   },
+      // });
+
+      // console.log('Public Key ID:', data);
+
+      const JsonString = payload.toString('utf8');
+      const JsonData = JSON.parse(JsonString);
+
+      // Verify Circle webhook signature
+      if (!this.verifyCircleSignature(JSON.stringify(JsonData), signature)) {
+        throw new UnauthorizedException('Invalid signature');
+      }
+
+      // console.log(JsonData);
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+      void this.webhookLog.save(this.webhookLog.create(JsonData));
+      this.logger.log(`Processing Circle event: ${JsonData.notificationType}`);
+
+      // Emit internal events based on webhook type
+      switch (JsonData.notificationType) {
+        case 'transactions.outbound':
+          await this.eventEmitter.emitAsync('tnx.outbound', JsonData);
+          break;
+        case 'transactions.inbound':
+          await this.eventEmitter.emitAsync('tnx.inbound', JsonData);
+          break;
+        case 'webhooks.test':
+          await this.eventEmitter.emitAsync('web.text', JsonData);
+          break;
+      }
+      return { status: 'processed', JsonData };
+    } catch (error) {
+      if (error instanceof AxiosError) {
+        throw new BadRequestException(error.message);
+      }
+      if (error instanceof Error) {
+        throw new BadRequestException(error.message);
+      }
+      throw error;
+    }
+  }
+
+  async processSeerBitEvent(payload: Buffer) {
+    const JsonString = payload.toString('utf8');
+    const JsonData = JSON.parse(JsonString);
+
+    const { notificationItems } = JsonData;
+    const request = notificationItems[0].notificationRequestItem;
+    void this.webhookLog.save(
+      this.webhookLog.create({
+        notificationId: request.eventId,
+        notificationType: request.eventType,
+        notification: request.data,
+        timestamp: request.eventDate,
+      }),
+    );
+
+    switch (request.eventType) {
+      case 'transaction':
+        await this.eventEmitter.emitAsync('tnx.in', request);
+        break;
+      case 'transaction.wallet':
+        await this.eventEmitter.emitAsync('tnx.out', request);
+        break;
+    }
+    return { status: 'processed', request };
+  }
+
+  async processVTPassEvent(payload: Buffer) {
+    try {
+      const JsonString = payload.toString('utf8');
+      const JsonData = JSON.parse(JsonString);
+
+      console.log('VTPass Webhook', { JsonData });
+    } catch (error) {
+      if (error instanceof Error) {
+        console.log(error);
+      }
+      throw error;
+    }
+  }
+
+  async findManyEvent(
+    query: findManyEvent,
+  ): Promise<DocumentResult<WebHookLog>> {
+    try {
+      const where = this.filterEvent(query);
+      const qb = this.webhookLog.createQueryBuilder('webhook');
+      buildFindManyQuery(
+        qb,
+        'webhook',
+        where,
+        query.search,
+        [],
+        query.include,
+        query.sort,
+      );
+      return FindManyWrapper(qb, query.page, query.limit);
+    } catch (error) {
+      if (error instanceof TypeORMError) {
+        throw new BadRequestException(error.message);
+      }
+      throw error;
+    }
+  }
+
+  async findOneEvent(query: findOneEvent): Promise<Document<WebHookLog>> {
+    try {
+      const { include, sort, ...filters } = query;
+      return FindOneWrapper<WebHookLog>(this.webhookLog, {
+        include,
+        sort,
+        filters,
+      });
+    } catch (error) {
+      if (error instanceof TypeORMError) {
+        throw new BadRequestException(error.message);
+      }
+      throw error;
+    }
+  }
+
+  private verifyCircleSignature(payload: string, signature: string): boolean {
+    // Load the public key from the base64 encoded string
+    // Note: The public key is static for a given publicKeyId, therefore we recommend you to cache it
+    const publicKeyBase64: string =
+      this.configService.getOrThrow('CIRCLE_PUBLIC_KEY');
+    const publicKeyBytes = Buffer.from(publicKeyBase64, 'base64');
+    const publicKey = crypto.createPublicKey({
+      key: publicKeyBytes,
+      format: 'der',
+      type: 'spki',
+    });
+
+    // Load the signature you want to verify
+    const signatureBytes = Buffer.from(signature, 'base64');
+
+    // Load the message you want to verify
+    const messageBytes = Buffer.from(payload);
+
+    // Verify the signature
+    const isSignatureValid = crypto.verify(
+      'sha256',
+      messageBytes,
+      publicKey,
+      signatureBytes,
+    );
+
+    if (!isSignatureValid) return false;
+    return true;
+  }
+
+  private filterEvent(query: findManyEvent) {
+    const where: Record<string, any> = {};
+
+    if (query.notificationType) {
+      where['notificationType'] = { $eq: query.notificationType };
+    }
+    if (query.version) where['version'] = { $eq: query.version };
+    if (query.id) where['id'] = query.id;
+
+    return where;
+  }
+}

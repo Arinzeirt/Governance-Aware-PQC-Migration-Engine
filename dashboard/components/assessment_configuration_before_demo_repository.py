@@ -7,30 +7,17 @@ import streamlit as st
 from engine.runner import runner
 from engine.runtime import runtime
 
+
 WORKSPACE = Path("workspace")
 WORKSPACE.mkdir(exist_ok=True)
 
-PROJECT_ROOT = Path(__file__).resolve().parents[2]
-
-DEMO_SOURCE = PROJECT_ROOT / "demo" / "reference-financial-backend"
+DEMO_REPOSITORY = WORKSPACE / "demo"
 
 DEFAULT_REPOSITORY = str(
     Path.home()
     / "Downloads"
     / "streple-backend-main"
 )
-
-
-def prepare_demo_repository():
-
-    destination = WORKSPACE / "reference-financial-backend"
-
-    if destination.exists():
-        shutil.rmtree(destination)
-
-    shutil.copytree(DEMO_SOURCE, destination)
-
-    return str(destination)
 
 
 def prepare_uploaded_zip(uploaded_file):
@@ -89,10 +76,10 @@ def show():
     if target_type == "Demo Repository":
 
         st.info(
-            "Run the assessment using the built-in enterprise reference repository."
+            "Run the assessment using the bundled demonstration repository."
         )
 
-        target = prepare_demo_repository()
+        target = str(DEMO_REPOSITORY)
 
     elif target_type == "Upload ZIP Repository":
 
@@ -133,7 +120,7 @@ def show():
     st.session_state.assessment_target_type = target_type
     st.session_state.assessment_target = target
 
-    st.write()
+    st.write("")
 
     running = runtime.running
 
@@ -170,3 +157,4 @@ def show():
             if started:
 
                 st.rerun()
+

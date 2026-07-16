@@ -1,0 +1,247 @@
+import { AuthUser, DocumentResult } from '@app/common';
+import { buildFindManyQuery, FindManyWrapper } from '@app/helpers';
+import { transactionType, walletSymbol } from '@app/wallets/input';
+import { WalletsService } from '@app/wallets/service/wallets.service';
+import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { Badge, GameProgress, GamingOnboarding, UserBadge } from './entities';
+import {
+  badgesResponse,
+  createProgress,
+  earnBadge,
+  findManyGameProgress,
+  findManyOnboardedUser,
+  gameOnboard,
+  Level,
+  progressResponse,
+} from './interface';
+
+@Injectable()
+export class GamifiedService {
+  constructor(
+    @InjectRepository(GamingOnboarding)
+    private readonly onboarding: Repository<GamingOnboarding>,
+    @InjectRepository(GameProgress)
+    private readonly gameProgress: Repository<GameProgress>,
+    @InjectRepository(UserBadge)
+    private readonly userBadge: Repository<UserBadge>,
+    @InjectRepository(Badge)
+    private readonly badgeRepo: Repository<Badge>,
+    private readonly walletService: WalletsService,
+  ) {}
+
+  async create(create: gameOnboard, user: AuthUser): Promise<GamingOnboarding> {
+    const haveAnswered = await this.onboarding.findOne({
+      where: { userId: user.id },
+    });
+    if (haveAnswered) return haveAnswered;
+
+    const question = this.onboarding.create({
+      ...create,
+      hasAnswer: true,
+      userId: user.id,
+    });
+    const data = await this.onboarding.save(question);
+    return data;
+  }
+
+  async trackUserProgress(
+    create: createProgress,
+    user: AuthUser,
+  ): Promise<progressResponse> {
+    // Check if progress already exists
+    const exists = await this.gameProgress.findOne({
+      where: { userId: user.id, phase: create.phase, level: create.level },
+    });
+    if (exists) {
+      void this.gameProgress.update(exists.id, { score: create.score });
+      return { ...exists, score: create.score };
+    }
+
+    // Calculate new earnings
+    // const earningsMap = this.earning(create.score);
+    // const earnedAmount = earningsMap[create.phase]?.[create.level] ?? 0;
+
+    if (create.level === Level.fifth) {
+      const totalAmount = 120;
+      const totalScore = 100;
+      const userPercentage = create.score / totalScore;
+      create.earn = userPercentage * totalAmount;
+    }
+
+    void this.fundUser(
+      {
+        amount: create.earn ?? 10,
+        key: `${create.phase}_${create.level}_${user.id}`,
+      },
+      user,
+    );
+
+    // Save progress
+    const progress = await this.gameProgress.save(
+      this.gameProgress.create({
+        ...create,
+        completedAt: new Date(),
+        userId: user.id,
+      }),
+    );
+
+    // Award badge
+    const badge = await this.earnBadges(
+      { phase: create.phase, level: create.level },
+      user,
+    );
+
+    return { ...progress, badge };
+  }
+
+  async userProgress(user: AuthUser) {
+    const [userProgress, totalScore, question] = await Promise.all([
+      this.gameProgress.findOne({
+        where: { userId: user.id },
+        order: { createdAt: 'DESC' },
+      }),
+      this.gameProgress
+        .createQueryBuilder('gameProgress')
+        .select('COALESCE(SUM(gameProgress.score), 0)', 'total')
+        .addSelect('COALESCE(SUM(gameProgress.earn), 0)', 'earn')
+        .where('gameProgress.userId = :userId', { userId: user.id })
+        .getRawOne(),
+      this.onboarding.findOne({
+        where: { userId: user.id },
+        select: { hasAnswer: true },
+      }),
+    ]);
+
+    if (!userProgress) {
+      return {
+        phase: 'Phase 1',
+        level: 'Level 1',
+        score: 0,
+        completedAt: new Date().toISOString(),
+        totalScore: 0,
+        totalEarn: 0,
+        ...question,
+      };
+    }
+
+    return {
+      ...userProgress,
+      totalScore: parseInt(String(totalScore.total)),
+      totalEarn: parseFloat(String(totalScore.earn)),
+      ...question,
+    };
+  }
+
+  async earnBadges(
+    data: earnBadge,
+    user: AuthUser,
+  ): Promise<badgesResponse | null> {
+    if (data.level !== Level.fifth) return null;
+
+    const badge = await this.badgeRepo.findOne({
+      where: { phase: data.phase },
+    });
+
+    if (!badge) return null;
+
+    // find if user have already earn the badge
+    const exists = await this.userBadge.findOne({
+      where: { userId: user.id, badgeId: badge.id },
+    });
+
+    if (exists) return { ...exists, image: badge.image };
+
+    const save = this.userBadge.create({
+      userId: user.id,
+      badgeId: badge.id,
+      earnedAt: new Date(),
+    });
+
+    const theBadge = await this.userBadge.save(save);
+    return { ...theBadge, image: badge.image };
+  }
+
+  findMany(
+    query: findManyOnboardedUser,
+  ): Promise<DocumentResult<GamingOnboarding>> {
+    const { page, sort, limit, include, search, ...filter } = query;
+    const where = this.filter(filter);
+    const qb = this.onboarding.createQueryBuilder('game_onboarding');
+
+    buildFindManyQuery(qb, 'game_onboarding', where, search, [], include, sort);
+    return FindManyWrapper(qb, page, limit);
+  }
+
+  findManyProgress(
+    query: findManyGameProgress,
+  ): Promise<DocumentResult<GameProgress>> {
+    const { page, sort, limit, include, search, ...filter } = query;
+    const where = this.progressFilter(filter);
+    const qb = this.gameProgress.createQueryBuilder('game_progress');
+
+    buildFindManyQuery(qb, 'game_progress', where, search, [], include, sort);
+    return FindManyWrapper(qb, page, limit);
+  }
+
+  private progressFilter(query: findManyGameProgress) {
+    let filters: Record<string, any> = {};
+
+    if (query.userId) {
+      filters = { userId: query.userId };
+    }
+
+    if (query.level) {
+      filters = { level: query.level };
+    }
+
+    if (query.phase) {
+      filters = { phase: query.phase };
+    }
+
+    return filters;
+  }
+
+  private filter(query: findManyOnboardedUser) {
+    let filters: Record<string, any> = {};
+
+    if (query.userId) {
+      filters = { userId: query.userId };
+    }
+
+    if (query.hasAnswer) {
+      filters = { hasAnswer: query.hasAnswer };
+    }
+
+    return filters;
+  }
+
+  private earning(score: number) {
+    const correct = score >= 70;
+    const EARNINGS_MAP: Record<string, Record<string, number>> = {
+      'Phase 1': {
+        'Level 1': 10,
+        'Level 2': 10,
+        'Level 3': 10,
+        'Level 4': 10,
+      },
+      'Phase 2': {
+        'Level 1': correct ? 50 : 20,
+        'Level 2': correct ? 50 : 20,
+        'Level 3': 100,
+      },
+      // 'Phase 3': { 'Level 3': 4000 },
+    };
+
+    return EARNINGS_MAP;
+  }
+
+  private fundUser(data: { amount: number; key: string }, user: AuthUser) {
+    return this.walletService.adjustWallet(user, transactionType.credit, {
+      amount: data.amount,
+      idempotency: data.key,
+      currency: walletSymbol.stp,
+    });
+  }
+}
