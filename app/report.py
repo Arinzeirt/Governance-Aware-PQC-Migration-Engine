@@ -1,3 +1,4 @@
+from pathlib import Path
 from executive import (
     generate_priority_actions,
     generate_governance_risks,
@@ -134,7 +135,12 @@ def generate_report(inventory):
 
             report_lines.append("-" * 32)
 
-    with open("reports/pqc_report.txt", "w") as f:
+    report_dir = Path("reports")
+    report_dir.mkdir(parents=True, exist_ok=True)
+
+    report_file = report_dir / "pqc_report.txt"
+
+    with open(report_file, "w", encoding="utf-8") as f:
         f.write("\n".join(report_lines))
 
     try:
