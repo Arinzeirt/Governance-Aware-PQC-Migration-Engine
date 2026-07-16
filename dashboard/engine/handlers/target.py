@@ -8,6 +8,9 @@ from engine.stage import transition
 
 def execute(target_type, target):
 
+    runtime.log(f"Target Type: {target_type}")
+    runtime.log(f"Target: {target}")
+
     transition(
         message="Resolving Assessment Target...",
         progress=15,
@@ -15,15 +18,7 @@ def execute(target_type, target):
         delay=0.30,
     )
 
-    if target_type in (
-
-        "Local Directory",
-
-        "Upload ZIP Repository",
-
-        "Demo Repository",
-
-    ):
+    if target_type in ("Local Directory", "Demo Repository"):
 
         directory = manager.prepare_local(target)
 
@@ -50,4 +45,3 @@ def execute(target_type, target):
     )
 
     return directory
-

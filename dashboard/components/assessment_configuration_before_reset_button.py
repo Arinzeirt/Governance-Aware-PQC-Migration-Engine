@@ -1,6 +1,5 @@
 from pathlib import Path
 import shutil
-import tempfile
 import zipfile
 
 import streamlit as st
@@ -8,42 +7,54 @@ import streamlit as st
 from engine.runner import runner
 from engine.runtime import runtime
 
+WORKSPACE = Path("workspace")
+WORKSPACE.mkdir(exist_ok=True)
 
-ROOT = Path(__file__).resolve().parents[2]
+PROJECT_ROOT = Path(__file__).resolve().parents[2]
 
-DEFAULT_REPOSITORY = str(ROOT)
+DEMO_SOURCE = PROJECT_ROOT / "demo" / "reference-financial-backend"
 
-DEMO_REPOSITORY = ROOT / "demo" / "reference-financial-backend"
+DEFAULT_REPOSITORY = str(
+    Path.home()
+    / "Downloads"
+    / "streple-backend-main"
+)
+
+
+def prepare_demo_repository():
+
+    destination = WORKSPACE / "reference-financial-backend"
+
+    if destination.exists():
+        shutil.rmtree(destination)
+
+    shutil.copytree(DEMO_SOURCE, destination)
+
+    return str(destination)
 
 
 def prepare_uploaded_zip(uploaded_file):
 
-    workspace = ROOT / "workspace"
+    upload_dir = WORKSPACE / "uploaded_repository"
 
-    workspace.mkdir(exist_ok=True)
+    if upload_dir.exists():
+        shutil.rmtree(upload_dir)
 
-    extract_dir = workspace / uploaded_file.name.replace(".zip", "")
+    upload_dir.mkdir(parents=True)
 
-    if extract_dir.exists():
+    zip_path = upload_dir / uploaded_file.name
 
-        shutil.rmtree(extract_dir)
+    with open(zip_path, "wb") as f:
+        f.write(uploaded_file.getbuffer())
 
-    extract_dir.mkdir(parents=True)
+    extract_dir = upload_dir / "repository"
 
-    with tempfile.NamedTemporaryFile(delete=False, suffix=".zip") as tmp:
-
-        tmp.write(uploaded_file.read())
-
-        zip_path = tmp.name
-
-    with zipfile.ZipFile(zip_path) as zip_ref:
-
+    with zipfile.ZipFile(zip_path, "r") as zip_ref:
         zip_ref.extractall(extract_dir)
 
     children = list(extract_dir.iterdir())
 
     if len(children) == 1 and children[0].is_dir():
-
         return str(children[0])
 
     return str(extract_dir)
@@ -78,10 +89,10 @@ def show():
     if target_type == "Demo Repository":
 
         st.info(
-            "Run the assessment using the bundled demonstration repository."
+            "Run the assessment using the built-in enterprise reference repository."
         )
 
-        target = str(DEMO_REPOSITORY)
+        target = prepare_demo_repository()
 
     elif target_type == "Upload ZIP Repository":
 
@@ -122,7 +133,7 @@ def show():
     st.session_state.assessment_target_type = target_type
     st.session_state.assessment_target = target
 
-    st.write("")
+    st.write()
 
     running = runtime.running
 
