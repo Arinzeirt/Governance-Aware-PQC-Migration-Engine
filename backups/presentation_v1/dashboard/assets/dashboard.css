@@ -1,0 +1,762 @@
+/* ==========================================================
+   EQMP Technology Preview v0.9 RC1
+   Enterprise Design System
+   Enet Technologies
+========================================================== */
+
+
+/* ==========================================================
+   APPLICATION
+========================================================== */
+
+.stApp{
+
+    background:#0F172A;
+
+    color:#F8FAFC;
+
+}
+
+.block-container{
+
+    max-width:1450px;
+
+    margin:auto;
+
+    padding-top:.8rem !important;
+
+    padding-bottom:1.2rem !important;
+
+    padding-left:2.4rem !important;
+
+    padding-right:2.4rem !important;
+
+}
+
+section.main>div{
+
+    padding-top:0 !important;
+
+}
+
+.element-container{
+
+    margin-bottom:.30rem !important;
+
+}
+
+
+/* ==========================================================
+   TYPOGRAPHY
+========================================================== */
+
+h1{
+
+    color:#F8FAFC;
+
+    font-weight:800;
+
+    letter-spacing:-.03em;
+
+}
+
+h2{
+
+    color:#F8FAFC;
+
+    font-weight:700;
+
+}
+
+h3{
+
+    color:#F8FAFC;
+
+    font-weight:700;
+
+}
+
+p{
+
+    color:#CBD5E1;
+
+    line-height:1.65;
+
+}
+
+
+/* ==========================================================
+   PANELS
+========================================================== */
+
+.eqmp-section{
+
+    background:#111827;
+
+    border:1px solid #334155;
+
+    border-radius:16px;
+
+    padding:22px;
+
+    margin-bottom:14px;
+
+    transition:all .20s ease;
+
+}
+
+.eqmp-section:hover{
+
+    border-color:#2563EB;
+
+    transform:translateY(-2px);
+
+    box-shadow:0 10px 22px rgba(37,99,235,.12);
+
+}
+
+
+/* ==========================================================
+   TITLES
+========================================================== */
+
+.eqmp-title{
+
+    color:#F8FAFC;
+
+    font-size:22px;
+
+    font-weight:700;
+
+    margin-bottom:10px;
+
+}
+
+.eqmp-subtitle{
+
+    color:#94A3B8;
+
+    font-size:13px;
+
+    line-height:1.6;
+
+}
+
+
+/* ==========================================================
+   KPI
+========================================================== */
+
+.eqmp-kpi{
+
+    background:#111827;
+
+    border:1px solid #334155;
+
+    border-radius:16px;
+
+    padding:18px;
+
+    min-height:120px;
+
+    display:flex;
+
+    flex-direction:column;
+
+    justify-content:center;
+
+}
+
+.eqmp-kpi:hover{
+
+    border-color:#2563EB;
+
+}
+
+.eqmp-kpi-title{
+
+    color:#94A3B8;
+
+    font-size:12px;
+
+    font-weight:600;
+
+}
+
+.eqmp-kpi-value{
+
+    color:#F8FAFC;
+
+    font-size:30px;
+
+    font-weight:700;
+
+    margin-top:8px;
+
+}
+
+.eqmp-kpi-desc{
+
+    color:#64748B;
+
+    font-size:12px;
+
+    margin-top:8px;
+
+}
+
+
+/* ==========================================================
+   FEATURE CARDS
+========================================================== */
+
+.eqmp-feature{
+
+    background:#111827;
+
+    border:1px solid #334155;
+
+    border-radius:16px;
+
+    padding:20px;
+
+    min-height:190px;
+
+    text-align:center;
+
+    transition:all .20s ease;
+
+}
+
+.eqmp-feature:hover{
+
+    border-color:#2563EB;
+
+    transform:translateY(-3px);
+
+    box-shadow:0 10px 22px rgba(37,99,235,.10);
+
+}
+
+.eqmp-feature-title{
+
+    color:#F8FAFC;
+
+    font-size:22px;
+
+    font-weight:700;
+
+    margin-bottom:12px;
+
+}
+
+.eqmp-feature-desc{
+
+    color:#CBD5E1;
+
+    font-size:14px;
+
+    line-height:1.7;
+
+}
+
+
+/* ==========================================================
+   BADGES
+========================================================== */
+
+.eqmp-badge{
+
+    display:inline-block;
+
+    padding:8px 18px;
+
+    border-radius:999px;
+
+    background:#172554;
+
+    border:1px solid #2563EB;
+
+    color:#BFDBFE;
+
+    font-size:13px;
+
+    font-weight:700;
+
+}
+
+.eqmp-active{
+
+    background:#0F766E;
+
+    color:white;
+
+    border-radius:999px;
+
+    padding:6px 14px;
+
+    font-size:12px;
+
+    font-weight:700;
+
+}
+
+
+/* ==========================================================
+   CAPABILITY PILLS
+========================================================== */
+
+.eqmp-pill{
+
+    background:#111827;
+
+    border:1px solid #334155;
+
+    border-radius:999px;
+
+    padding:12px 18px;
+
+    text-align:center;
+
+    color:#CBD5E1;
+
+    font-weight:600;
+
+    transition:.20s;
+
+}
+
+.eqmp-pill:hover{
+
+    border-color:#2563EB;
+
+}
+
+
+/* ==========================================================
+   BUTTONS
+========================================================== */
+
+.stButton>button{
+
+    border-radius:12px !important;
+
+    font-weight:600 !important;
+
+    transition:.20s ease !important;
+
+    min-height:50px;
+
+}
+
+/* Primary */
+
+.stButton>button[kind="primary"]{
+
+    background:#2563EB !important;
+
+    color:white !important;
+
+    border:1px solid #2563EB !important;
+
+    box-shadow:0 8px 20px rgba(37,99,235,.20);
+
+}
+
+.stButton>button[kind="primary"]:hover{
+
+    background:#1D4ED8 !important;
+
+    border-color:#1D4ED8 !important;
+
+    transform:translateY(-1px);
+
+}
+
+/* Secondary */
+
+.stButton>button[kind="secondary"]{
+
+    background:#111827 !important;
+
+    color:#CBD5E1 !important;
+
+    border:1px solid #334155 !important;
+
+}
+
+.stButton>button[kind="secondary"]:hover{
+
+    border-color:#2563EB !important;
+
+    color:white !important;
+
+}
+
+.stDownloadButton>button{
+
+    border-radius:12px !important;
+
+}
+
+
+/* ==========================================================
+   TABLES
+========================================================== */
+
+table{
+
+    border-collapse:collapse;
+
+}
+
+thead tr{
+
+    background:#111827;
+
+}
+
+tbody tr{
+
+    background:#0F172A;
+
+}
+
+
+/* ==========================================================
+   METRICS
+========================================================== */
+
+[data-testid="stMetric"]{
+
+    background:#111827;
+
+    border:1px solid #334155;
+
+    border-radius:12px;
+
+    padding:12px;
+
+}
+
+
+/* ==========================================================
+   LINKS
+========================================================== */
+
+a{
+
+    color:#60A5FA;
+
+}
+
+a:hover{
+
+    color:#93C5FD;
+
+}
+
+
+/* ==========================================================
+   DIVIDER
+========================================================== */
+
+hr{
+
+    border:none;
+
+    border-top:1px solid #334155;
+
+}
+
+
+/* ==========================================================
+   FOOTER
+========================================================== */
+
+.eqmp-footer{
+
+    text-align:center;
+
+    color:#64748B;
+
+    font-size:12px;
+
+    margin-top:28px;
+
+}
+
+/* ==========================================================
+   EQMP DESIGN SYSTEM v1.0
+========================================================== */
+
+/* ---------- Enterprise Panel ---------- */
+
+.eqmp-panel{
+
+    background:#111827;
+
+    border:1px solid #334155;
+
+    border-radius:16px;
+
+    padding:20px;
+
+    margin-bottom:18px;
+
+}
+
+.eqmp-panel-title{
+
+    font-size:20px;
+
+    font-weight:700;
+
+    color:#F8FAFC;
+
+    margin-bottom:16px;
+
+}
+
+.eqmp-panel-subtitle{
+
+    color:#94A3B8;
+
+    font-size:13px;
+
+}
+
+
+/* ---------- KPI Card ---------- */
+
+.eqmp-kpi-card{
+
+    background:#111827;
+
+    border:1px solid #334155;
+
+    border-radius:14px;
+
+    padding:18px;
+
+    text-align:center;
+
+    min-height:105px;
+
+}
+
+.eqmp-kpi-title{
+
+    color:#94A3B8;
+
+    font-size:12px;
+
+    font-weight:600;
+
+}
+
+.eqmp-kpi-value{
+
+    color:#F8FAFC;
+
+    font-size:30px;
+
+    font-weight:700;
+
+    margin-top:10px;
+
+}
+
+
+/* ---------- Status Card ---------- */
+
+.eqmp-status-card{
+
+    background:#111827;
+
+    border:1px solid #334155;
+
+    border-radius:14px;
+
+    padding:18px;
+
+}
+
+.eqmp-status-title{
+
+    color:#94A3B8;
+
+    font-size:12px;
+
+    margin-bottom:10px;
+
+}
+
+.eqmp-status-value{
+
+    font-size:22px;
+
+    font-weight:700;
+
+    color:white;
+
+}
+
+
+/* ---------- Repository ---------- */
+
+.eqmp-repository{
+
+    background:#111827;
+
+    border:1px solid #334155;
+
+    border-radius:14px;
+
+    padding:18px;
+
+}
+
+
+/* ---------- Timeline ---------- */
+
+.eqmp-timeline{
+
+    background:#111827;
+
+    border:1px solid #334155;
+
+    border-radius:14px;
+
+    padding:18px;
+
+}
+
+.eqmp-timeline-item{
+
+    padding:8px 0;
+
+    border-bottom:1px solid #263244;
+
+}
+
+.eqmp-timeline-item:last-child{
+
+    border-bottom:none;
+
+}
+
+
+/* ---------- Discovery ---------- */
+
+.eqmp-discovery{
+
+    background:#111827;
+
+    border:1px solid #334155;
+
+    border-radius:12px;
+
+    padding:14px;
+
+    margin-bottom:12px;
+
+}
+
+
+/* ---------- Progress ---------- */
+
+.eqmp-progress-label{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    margin-bottom:10px;
+
+    color:#CBD5E1;
+
+    font-size:13px;
+
+}
+/* ==========================================================
+   EQMP WORKFLOW RIBBON
+========================================================== */
+
+.eqmp-workflow{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    gap:8px;
+
+    margin:18px 0 24px 0;
+
+}
+
+.eqmp-step{
+
+    flex:1;
+
+    text-align:center;
+
+}
+
+.eqmp-step-circle{
+
+    width:18px;
+
+    height:18px;
+
+    border-radius:50%;
+
+    margin:auto;
+
+    margin-bottom:8px;
+
+}
+
+.eqmp-step-title{
+
+    color:#CBD5E1;
+
+    font-size:12px;
+
+    font-weight:600;
+
+}
+
+.eqmp-complete{
+
+    background:#22C55E;
+
+}
+
+.eqmp-current{
+
+    background:#2563EB;
+
+    box-shadow:0 0 12px rgba(37,99,235,.45);
+
+}
+
+.eqmp-pending{
+
+    background:#475569;
+
+}
+
+.eqmp-line{
+
+    flex:1;
+
+    height:2px;
+
+    background:#334155;
+
+    margin-top:-16px;
+
+}
