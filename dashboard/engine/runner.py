@@ -1,5 +1,8 @@
 import threading
 import traceback
+from pathlib import Path
+
+from project.manager import manager
 
 from engine.assessment_engine import engine
 from engine.runtime import runtime
@@ -21,15 +24,36 @@ class AssessmentRunner:
         if self.running:
             return False
 
+        #
+        # Create Assessment Project
+        #
+
+        manager.create_assessment(
+
+            name=Path(target).name or "Enterprise Assessment",
+
+            repository=target,
+
+            repository_type=target_type,
+
+        )
+
         self.running = True
 
         self.thread = threading.Thread(
+
             target=self._run,
+
             args=(
+
                 target_type,
+
                 target,
+
             ),
+
             daemon=True,
+
         )
 
         self.thread.start()
@@ -45,14 +69,19 @@ class AssessmentRunner:
         try:
 
             engine.run(
+
                 target_type,
+
                 target,
+
             )
 
         except Exception as e:
 
             runtime.log(
+
                 f"ENGINE ERROR: {type(e).__name__}: {e}"
+
             )
 
             traceback.print_exc()
@@ -69,3 +98,4 @@ class AssessmentRunner:
 
 
 runner = AssessmentRunner()
+

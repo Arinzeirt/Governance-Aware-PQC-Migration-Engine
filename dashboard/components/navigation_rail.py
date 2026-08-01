@@ -3,36 +3,13 @@ import streamlit as st
 
 NAVIGATION = {
 
-    "EXECUTIVE WORKSPACE": [
+    "ENET TECHNOLOGIES": [
 
         ("Dashboard", "dashboard"),
         ("Assessment", "assessment"),
-        ("Inventory", "inventory"),
-        ("Reports", "reports"),
-        ("Migration Planner", "migration"),
-
-    ],
-
-    "ENGINEERING": [
-
-        ("Repository Explorer", "repository"),
-        ("Architecture", "repository"),
-        ("Developer Portal", "repository"),
-
-    ],
-
-    "RESEARCH": [
-
+        ("Repository", "repository"),
         ("Research Centre", "research"),
-        ("Research Notes", "research"),
-        ("Frameworks & Publications", "research"),
-
-    ],
-
-    "ABOUT": [
-
-        ("About EQMP", "about"),
-        ("Research Portfolio", "about"),
+        ("About", "about"),
 
     ]
 
@@ -45,7 +22,7 @@ def show():
 
         st.markdown(
             """
-# ENET
+# ENET TECHNOLOGIES
 
 Enterprise Quantum Migration Platform
 """
@@ -62,14 +39,14 @@ Enterprise Quantum Migration Platform
                 if st.button(
                     title,
                     use_container_width=True,
-                    key=f"nav_{page}_{title}"
+                    key=f"nav_{page}"
                 ):
 
                     st.session_state.page = page
 
                     st.rerun()
 
-            st.divider()
+        st.divider()
 
-        st.caption("Version 2.0 DEV")
+        st.caption("Version 2.0")
         st.caption("© Enet Technologies")

@@ -1,3 +1,5 @@
+from pathlib import Path
+
 from scanner import scan_directory
 
 from engine.runtime import runtime
@@ -8,6 +10,26 @@ DISCOVERY_END = 65
 
 
 def scanner_callback(**event):
+
+    #
+    # Discovery Started
+    #
+
+    if event["event"] == "scan_started":
+
+        runtime.log(
+
+            f"{event['total']} supported source files identified"
+
+        )
+
+        runtime.log(
+
+            "Beginning enterprise cryptographic analysis"
+
+        )
+
+        return
 
     #
     # File Progress
@@ -24,6 +46,46 @@ def scanner_callback(**event):
             total=event["total"],
 
         )
+
+        #
+        # Milestone updates
+        #
+
+        if event["current"] == 1:
+
+            runtime.log(
+
+                "Scanning source code"
+
+            )
+
+        elif event["current"] % 50 == 0:
+
+            runtime.log(
+
+                f"{event['current']} files analysed"
+
+            )
+
+        #
+        # Entering a new directory
+        #
+
+        parent = Path(event["file"]).parent.name
+
+        if parent:
+
+            runtime.emit(
+
+                f"Scanning {parent}/",
+
+                progress=None,
+
+                stage="Discovery",
+
+                log=False,
+
+            )
 
         progress = DISCOVERY_START + (
 
@@ -45,11 +107,13 @@ def scanner_callback(**event):
 
         )
 
+        return
+
     #
     # Keyword Discovery
     #
 
-    elif event["event"] == "keyword":
+    if event["event"] == "keyword":
 
         runtime.add_discovery(
 
@@ -67,11 +131,13 @@ def scanner_callback(**event):
 
         )
 
+        return
+
     #
     # Classification
     #
 
-    elif event["event"] == "classification":
+    if event["event"] == "classification":
 
         runtime.add_discovery(
 
@@ -89,8 +155,38 @@ def scanner_callback(**event):
 
         )
 
+        return
+
 
 def execute(directory):
+
+    runtime.emit(
+
+        "Preparing cryptographic discovery",
+
+        progress=30,
+
+        stage="Discovery",
+
+    )
+
+    runtime.log(
+
+        "Enumerating repository structure"
+
+    )
+
+    runtime.log(
+
+        "Identifying supported source files"
+
+    )
+
+    runtime.log(
+
+        "Building discovery workspace"
+
+    )
 
     runtime.emit(
 
@@ -110,6 +206,12 @@ def execute(directory):
 
     )
 
+    runtime.log(
+
+        "Building enterprise inventory"
+
+    )
+
     runtime.emit(
 
         f"Discovery completed ({len(findings)} assets)",
@@ -121,4 +223,3 @@ def execute(directory):
     )
 
     return findings
-

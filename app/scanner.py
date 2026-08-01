@@ -101,10 +101,6 @@ SOURCE_EXTENSIONS = {
 
 def should_scan(file: Path):
 
-    #
-    # Ignore folders
-    #
-
     if any(
 
         part in IGNORED_DIRECTORIES
@@ -114,10 +110,6 @@ def should_scan(file: Path):
     ):
 
         return False
-
-    #
-    # Ignore large binary assets
-    #
 
     if file.suffix.lower() not in SOURCE_EXTENSIONS:
 
@@ -153,6 +145,20 @@ def scan_directory(
     ]
 
     total_files = len(files)
+
+    #
+    # Notify runtime that discovery is beginning
+    #
+
+    if callback:
+
+        callback(
+
+            event="scan_started",
+
+            total=total_files,
+
+        )
 
     for index, file in enumerate(
 
@@ -279,4 +285,3 @@ def scan_directory(
             continue
 
     return findings
-

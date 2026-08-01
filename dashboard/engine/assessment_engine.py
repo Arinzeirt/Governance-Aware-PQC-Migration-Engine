@@ -29,7 +29,7 @@ class AssessmentEngine:
 
         runtime.reset()
 
-        runtime.log("ENGINE START")
+        runtime.log("Enterprise Discovery Assessment Started")
 
         session.start(
 
@@ -43,7 +43,7 @@ class AssessmentEngine:
         # INITIALIZING
         #
 
-        runtime.log("ENTER INITIALIZE")
+        runtime.log("Loading Assessment Configuration")
 
         state_machine.reset()
 
@@ -55,13 +55,13 @@ class AssessmentEngine:
 
         initialize.execute()
 
-        runtime.log("EXIT INITIALIZE")
+        runtime.log("Assessment Configuration Loaded")
 
         #
         # TARGET
         #
 
-        runtime.log("ENTER TARGET")
+        runtime.log("Connecting Assessment Target")
 
         session.transition(
 
@@ -77,13 +77,13 @@ class AssessmentEngine:
 
         )
 
-        runtime.log("EXIT TARGET")
+        runtime.log("Repository Connected Successfully")
 
         #
         # DISCOVERY
         #
 
-        runtime.log("ENTER DISCOVERY")
+        runtime.log("Beginning Cryptographic Discovery")
 
         session.transition(
 
@@ -97,13 +97,13 @@ class AssessmentEngine:
 
         )
 
-        runtime.log("EXIT DISCOVERY")
+        runtime.log("Cryptographic Discovery Completed")
 
         #
         # INVENTORY
         #
 
-        runtime.log("ENTER INVENTORY")
+        runtime.log("Building Enterprise Inventory")
 
         session.transition(
 
@@ -116,14 +116,12 @@ class AssessmentEngine:
             findings,
 
         )
-
-        runtime.log("EXIT INVENTORY")
-
+        runtime.log("Enterprise Inventory Completed")
         #
         # REPORT
         #
 
-        runtime.log("ENTER REPORT")
+        runtime.log("Generating Executive Migration Report")
 
         session.transition(
 
@@ -137,17 +135,16 @@ class AssessmentEngine:
 
         )
 
-        runtime.log("EXIT REPORT")
+        runtime.log("Executive Report Generated")
 
         #
         # COMPLETE
         #
 
-        runtime.log("ENGINE COMPLETE")
+        runtime.log("Enterprise Discovery Completed Successfully")
 
         session.complete()
 
         runtime.finish()
-
 
 engine = AssessmentEngine()

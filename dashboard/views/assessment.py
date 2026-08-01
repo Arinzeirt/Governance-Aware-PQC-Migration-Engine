@@ -4,7 +4,7 @@ from components.assessment_header import show as show_header
 from components.assessment_status import show as show_status
 from components.assessment_configuration import show as show_configuration
 
-from components.runtime_dashboard import show as show_runtime_dashboard
+from components.runtime_dashboard_v2 import show as show_runtime_dashboard
 
 from components.assessment_summary import show as show_summary
 from components.assessment_recommendation import show as show_recommendation

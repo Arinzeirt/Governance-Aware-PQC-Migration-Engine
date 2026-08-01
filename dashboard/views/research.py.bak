@@ -1,0 +1,204 @@
+import streamlit as st
+
+from components.asset_card import show as show_asset
+from components.note_card import show as show_note
+
+from utils.framework_registry import FRAMEWORK_REGISTRY
+from utils.research_notes import load_notes
+
+
+def show():
+
+    # ==========================================================
+    # Header
+    # ==========================================================
+
+    st.title("Research Centre")
+
+    st.caption(
+        "Enterprise Quantum Migration Platform • Research & Innovation"
+    )
+
+    # ==========================================================
+    # Featured Research
+    # ==========================================================
+
+    st.markdown(
+        """
+<div style="
+background:#111827;
+border:1px solid #334155;
+border-radius:16px;
+padding:32px;
+margin-top:20px;
+margin-bottom:28px;
+">
+
+<div style="
+font-size:14px;
+font-weight:700;
+color:#60A5FA;
+margin-bottom:10px;
+">
+
+FEATURED RESEARCH
+
+</div>
+
+<div style="
+font-size:34px;
+font-weight:700;
+line-height:1.4;
+color:white;
+margin-bottom:18px;
+">
+
+Adaptive and Governance-Aware
+Post-Quantum Cryptographic Migration
+for High-Throughput Financial Systems
+
+</div>
+
+<div style="
+font-size:16px;
+line-height:1.8;
+color:#CBD5E1;
+">
+
+This research investigates how governance,
+enterprise architecture,
+cryptographic discovery,
+migration intelligence
+and executive decision support
+can be combined to help organisations
+transition toward enterprise-wide
+post-quantum cryptographic resilience.
+
+</div>
+
+<br>
+
+<b>Research Status:</b> Active Research<br>
+<b>Institution:</b> Manchester Metropolitan University<br>
+<b>Platform:</b> Enterprise Quantum Migration Platform (EQMP)
+
+</div>
+""",
+        unsafe_allow_html=True,
+    )
+
+    # ==========================================================
+    # Metrics
+    # ==========================================================
+
+    col1, col2, col3, col4 = st.columns(4)
+
+    with col1:
+        st.metric(
+            "Research Notes",
+            "18+",
+        )
+
+    with col2:
+        st.metric(
+            "Frameworks",
+            "5",
+        )
+
+    with col3:
+        st.metric(
+            "Case Studies",
+            "Growing",
+        )
+
+    with col4:
+        st.metric(
+            "Research Status",
+            "Active",
+        )
+
+    st.divider()
+
+    # ==========================================================
+    # Overview
+    # ==========================================================
+
+    st.subheader("Research Overview")
+
+    st.write(
+        """
+The Enterprise Quantum Migration Platform (EQMP)
+is supported by an ongoing programme of research
+focused on governance-aware
+post-quantum cryptographic migration.
+
+The objective is to help organisations
+prepare for quantum-resistant cryptography
+through governance,
+enterprise architecture,
+cryptographic discovery,
+migration planning,
+and executive decision support.
+"""
+    )
+
+    st.divider()
+
+    # ==========================================================
+    # EQMP Frameworks
+    # ==========================================================
+
+    st.subheader("EQMP Frameworks")
+
+    frameworks = [
+
+        (
+            "Governance-Aware PQC Migration Framework",
+            "A governance-driven methodology for planning and managing enterprise post-quantum migration."
+        ),
+
+        (
+            "Enterprise Quantum Readiness Framework",
+            "A maturity framework for assessing organisational readiness for post-quantum cryptography."
+        ),
+
+        (
+            "Migration Decision Engine",
+            "A decision-support model that prioritises migration activities using governance, business impact and cryptographic risk."
+        ),
+
+        (
+            "Cryptographic Discovery & Inventory Model",
+            "An enterprise discovery model for identifying cryptographic assets and establishing migration inventories."
+        ),
+
+        (
+            "Compliance & Regulatory Alignment Framework",
+            "A governance framework aligning PQC migration with regulatory and audit requirements."
+        ),
+
+    ]
+
+    cols = st.columns(2)
+
+    for index, (title, description) in enumerate(frameworks):
+
+        framework = FRAMEWORK_REGISTRY.get(
+            title,
+            {
+                "type": "Framework",
+                "id": "EQMP-UNK-000",
+            },
+        )
+
+        with cols[index % 2]:
+
+            show_asset(
+                asset_type=framework["type"],
+                asset_id=framework["id"],
+                title=title,
+                description=description,
+                button_label="View Framework",
+            )
+
+    st.divider()

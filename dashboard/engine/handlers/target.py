@@ -18,14 +18,27 @@ def execute(target_type, target):
         delay=0.30,
     )
 
-    if target_type in ("Local Directory", "Demo Repository"):
+    #
+    # Local-style assessment targets
+    #
+    if target_type in (
+        "Local Directory",
+        "Demo Repository",
+        "Enterprise Reference Repository (Recommended)",
+    ):
 
         directory = manager.prepare_local(target)
 
+    #
+    # GitHub assessment
+    #
     elif target_type == "GitHub Repository":
 
         directory = manager.prepare_github(target)
 
+    #
+    # Unknown target
+    #
     else:
 
         raise ValueError(

@@ -55,17 +55,13 @@ def show():
 
     target_type = st.radio(
 
-        "Assessment Source",
+        "Select Assessment Target",
 
         [
 
-            "Demo Repository",
-
-            "Upload ZIP Repository",
+            "Enterprise Reference Repository (Recommended)",
 
             "GitHub Repository",
-
-            "Local Directory",
 
         ],
 
@@ -75,47 +71,25 @@ def show():
 
     target = ""
 
-    if target_type == "Demo Repository":
+    if target_type == "Enterprise Reference Repository (Recommended)":
 
-        st.info(
-            "Run the assessment using the bundled demonstration repository."
+        st.success(
+            "Assess the bundled enterprise reference application included with EQMP."
         )
 
         target = str(DEMO_REPOSITORY)
 
-    elif target_type == "Upload ZIP Repository":
-
-        uploaded = st.file_uploader(
-
-            "Upload Repository (.zip)",
-
-            type=["zip"],
-
-        )
-
-        if uploaded is not None:
-
-            target = prepare_uploaded_zip(uploaded)
-
-            st.success("Repository uploaded successfully.")
-
     elif target_type == "GitHub Repository":
+
+        st.info(
+            "Assess a public GitHub repository by providing its URL."
+        )
 
         target = st.text_input(
 
             "GitHub Repository URL",
 
             placeholder="https://github.com/owner/repository",
-
-        )
-
-    else:
-
-        target = st.text_input(
-
-            "Repository Path",
-
-            value=DEFAULT_REPOSITORY,
 
         )
 
