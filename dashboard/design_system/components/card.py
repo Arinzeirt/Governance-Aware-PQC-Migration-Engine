@@ -1,28 +1,30 @@
 import streamlit as st
 
 
-def begin():
+def show(
+    title="",
+    body="",
+    icon="",
+):
 
-    st.markdown(
-        """
-<div style="
-background:#111827;
-border:1px solid #334155;
-border-radius:14px;
-padding:20px;
-margin-bottom:18px;
-box-shadow:0 6px 18px rgba(0,0,0,0.18);
-">
-""",
-        unsafe_allow_html=True,
-    )
+    with st.container(border=True):
 
+        top, = st.columns(1)
 
-def end():
+        with top:
 
-    st.markdown(
-        """
-</div>
-""",
-        unsafe_allow_html=True,
-    )
+            if icon:
+
+                st.markdown(f"# {icon}")
+
+            if title:
+
+                st.markdown(
+                    f"### {title}"
+                )
+
+            if body:
+
+                st.caption(body)
+
+        st.write("")
