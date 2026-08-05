@@ -18,6 +18,7 @@ from views.enterprise_assessment import show as enterprise_assessment
 from views.research import show as research
 from views.frameworks import show as frameworks
 from views.about import show as about
+from views.asset_detail import show as asset_detail
 
 
 st.set_page_config(
@@ -66,6 +67,12 @@ elif page == "about":
     navigation()
 
     about()
+
+elif page == "asset_detail":
+
+    navigation()
+
+    asset_detail()
 
 else:
 

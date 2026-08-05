@@ -3,6 +3,7 @@ import streamlit as st
 from components.asset_metadata import show as show_metadata
 from components.related_assets import show as show_related
 from components.breadcrumb import show as show_breadcrumb
+from components.landing.footer import show as show_footer
 
 from utils.asset_loader import load_asset
 
@@ -27,6 +28,7 @@ def show():
     )
 
     if st.button("← Back to Research Centre"):
+
         st.session_state.page = origin
         st.rerun()
 
@@ -54,12 +56,20 @@ def show():
         asset["content"]
     )
 
-    show_related(
-        asset.get("metadata", {})
+    metadata = asset.get("metadata", {})
+
+    has_related = (
+        metadata.get("related")
+        or asset["id"].startswith("EQMP-RN-")
     )
+
+    if has_related:
+
+        st.divider()
+
+        show_related(asset)
 
     st.divider()
 
-    st.caption(
-        "Enterprise Quantum Migration Platform (EQMP)"
-    )
+    show_footer()
+

@@ -30,14 +30,4 @@ FRAMEWORK_REGISTRY = {
         "id": "EQMP-SH-001",
     },
 
-    "AI-Assisted Migration Intelligence Framework (Coming Soon)": {
-        "type": "Framework",
-        "id": "EQMP-AI-001",
-    },
-
-    "Enterprise Cryptographic Agility Framework (Coming Soon)": {
-        "type": "Framework",
-        "id": "EQMP-CA-001",
-    },
-
 }
