@@ -1,13 +1,12 @@
 import streamlit as st
 
-from components.asset_card import show as show_asset
 from components.note_card import show as show_note
 from components.publication_card import show as show_publication
 from components.case_study_card import show as show_case_study
 from components.roadmap import show as show_roadmap
 from components.programme_status import show as show_programme
+from components.landing.footer import show as show_footer
 
-from utils.framework_registry import FRAMEWORK_REGISTRY
 from utils.research_notes import load_notes
 
 
@@ -93,95 +92,21 @@ post-quantum cryptographic resilience.
     # Metrics
     # ==========================================================
 
-    col1, col2, col3, col4 = st.columns(4)
+    col1, col2, col3 = st.columns(3)
 
     with col1:
-        st.metric(
-            "Research Notes",
-            "18+",
-        )
+        st.metric("Research Notes", "18+")
 
     with col2:
-        st.metric(
-            "Frameworks",
-            "5",
-        )
+        st.metric("Case Studies", "Growing")
 
     with col3:
-        st.metric(
-            "Case Studies",
-            "Growing",
-        )
-
-    with col4:
-        st.metric(
-            "Research Status",
-            "Active",
-        )
+        st.metric("Research Status", "Active")
 
     st.divider()
 
     # ==========================================================
-    # EQMP Frameworks
-    # ==========================================================
-
-    st.subheader("EQMP Frameworks")
-
-    frameworks = [
-
-        (
-            "Governance-Aware PQC Migration Framework",
-            "A governance-driven methodology for planning and managing enterprise post-quantum migration.",
-        ),
-
-        (
-            "Enterprise Quantum Readiness Framework",
-            "A maturity framework for assessing organisational readiness for post-quantum cryptography.",
-        ),
-
-        (
-            "Migration Decision Engine",
-            "A governance-aware decision-support model for enterprise migration planning.",
-        ),
-
-        (
-            "Cryptographic Discovery & Inventory Model",
-            "Discovery and inventory of enterprise cryptographic assets and dependencies.",
-        ),
-
-        (
-            "Compliance & Regulatory Alignment Framework",
-            "Alignment of enterprise migration activities with regulatory and audit requirements.",
-        ),
-
-    ]
-
-    cols = st.columns(2)
-
-    for index, (title, description) in enumerate(frameworks):
-
-        framework = FRAMEWORK_REGISTRY.get(
-            title,
-            {
-                "type": "Framework",
-                "id": "EQMP-UNK-000",
-            },
-        )
-
-        with cols[index % 2]:
-
-            show_asset(
-                asset_type=framework["type"],
-                asset_id=framework["id"],
-                title=title,
-                description=description,
-                button_label="View Framework",
-            )
-
-    st.divider()
-
-    # ==========================================================
-    # EQMP Research Series
+    # Research Notes
     # ==========================================================
 
     st.subheader("EQMP Research Series")
@@ -200,12 +125,14 @@ post-quantum cryptographic resilience.
 
             with cols[index % 3]:
 
-               show_note(
-    asset_id=note["asset_id"],
-    title=note["title"],
-)
+                show_note(
+                    asset_id=note["asset_id"],
+                    title=note["title"],
+                )
 
-    st.divider()    # ==========================================================
+    st.divider()
+
+    # ==========================================================
     # Research Outputs
     # ==========================================================
 
@@ -259,16 +186,21 @@ post-quantum cryptographic resilience.
 
     st.divider()
 
-    # ==========================================================
-    # Research Roadmap
-    # ==========================================================
+    #
+    # Roadmap
+    #
 
     show_roadmap()
 
     st.divider()
 
-    # ==========================================================
-    # Research Programme
-    # ==========================================================
+    #
+    # Programme
+    #
 
     show_programme()
+
+    st.divider()
+
+    show_footer()
+

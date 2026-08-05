@@ -1,3 +1,5 @@
+from components.landing.navigation import show as navigation
+
 from components.assessment.shell import show as assessment_shell
 
 from components.assessment.overview.page import (
@@ -7,6 +9,16 @@ from components.assessment.overview.page import (
 
 def show():
 
+    #
+    # Global Navigation
+    #
+
+    navigation()
+
+    #
+    # Enterprise Assessment
+    #
+
     assessment_shell(
 
         {
@@ -15,3 +27,4 @@ def show():
         }
 
     )
+

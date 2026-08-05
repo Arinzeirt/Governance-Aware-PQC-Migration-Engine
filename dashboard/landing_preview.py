@@ -12,33 +12,28 @@ from components.landing.enterprise_value import show as enterprise_value
 from components.landing.footer import show as footer
 
 #
-# Enterprise Assessment
+# Views
 #
 from views.enterprise_assessment import show as enterprise_assessment
+from views.research import show as research
+from views.frameworks import show as frameworks
+from views.about import show as about
 
 
 st.set_page_config(
-    page_title="EQMP",
+    page_title="Enterprise Quantum Migration Platform (EQMP)",
     page_icon="dashboard/assets/favicon.png",
     layout="wide",
 )
 
-#
-# Load Theme
-#
 load()
 
-#
-# Session Defaults
-#
 if "page" not in st.session_state:
     st.session_state.page = "landing"
 
+page = st.session_state.page
 
-#
-# Router
-#
-if st.session_state.page == "landing":
+if page == "landing":
 
     navigation()
 
@@ -50,9 +45,27 @@ if st.session_state.page == "landing":
 
     footer()
 
-elif st.session_state.page == "enterprise_assessment":
+elif page == "enterprise_assessment":
 
     enterprise_assessment()
+
+elif page == "research":
+
+    navigation()
+
+    research()
+
+elif page == "frameworks":
+
+    navigation()
+
+    frameworks()
+
+elif page == "about":
+
+    navigation()
+
+    about()
 
 else:
 

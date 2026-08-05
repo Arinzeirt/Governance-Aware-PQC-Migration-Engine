@@ -1,4 +1,5 @@
 FRAMEWORK_REGISTRY = {
+
     "Governance-Aware PQC Migration Framework": {
         "type": "Framework",
         "id": "EQMP-GF-001",
@@ -14,7 +15,7 @@ FRAMEWORK_REGISTRY = {
         "id": "EQMP-DE-001",
     },
 
-    "Cryptographic Discovery & Inventory Model": {
+    "Cryptographic Discovery & Inventory Framework": {
         "type": "Framework",
         "id": "EQMP-CD-001",
     },
@@ -22,6 +23,11 @@ FRAMEWORK_REGISTRY = {
     "Compliance & Regulatory Alignment Framework": {
         "type": "Framework",
         "id": "EQMP-CF-001",
+    },
+
+    "Self-Healing Cryptographic Resilience Framework": {
+        "type": "Framework",
+        "id": "EQMP-SH-001",
     },
 
     "AI-Assisted Migration Intelligence Framework (Coming Soon)": {
@@ -33,4 +39,5 @@ FRAMEWORK_REGISTRY = {
         "type": "Framework",
         "id": "EQMP-CA-001",
     },
+
 }
