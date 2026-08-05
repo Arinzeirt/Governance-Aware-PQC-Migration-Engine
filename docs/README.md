@@ -1,52 +1,12 @@
 # Enterprise Quantum Migration Platform (EQMP)
 
-## Documentation Portal
+## Official Documentation
 
-Welcome to the official documentation repository for the Enterprise Quantum Migration Platform (EQMP).
+This directory contains the official documentation for the current generation of EQMP.
 
-EQMP is the reference implementation of the Enterprise Quantum Migration Governance Framework (EQMGF).
+All documentation in archive/, backups/, architecture-review/, research-notes/, snapshots/, and legacy design folders remains historical reference only.
 
----
+This documentation becomes the official source of truth for the project.
 
-## Documentation
-
-specifications/
-Product specifications
-
-frameworks/
-Governance methodology
-
-architecture/
-Software architecture
-
-design/
-Design system
-
-ecosystem/
-Technology ecosystem
-
-research/
-Supporting research
-
-research-notes/
-Research Notes
-
-releases/
-Release history
-
----
-
-## Core Principles
-
-• Governance before technology
-
-• Evidence before recommendation
-
-• One executive decision per workspace
-
-• Governance Experience (GX)
-
----
-
-© Enet Technologies
-
+Status: Active
+Documentation Version: 1.0

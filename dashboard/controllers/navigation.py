@@ -1,4 +1,5 @@
 from views.dashboard import show as dashboard
+from views.enterprise_assessment import show as enterprise_assessment
 from views.assessment import show as assessment
 from views.migration import show as migration
 from views.reports import show as reports
@@ -15,6 +16,14 @@ ROUTES = {
 
     "dashboard": dashboard,
 
+    #
+    # Enterprise Assessment Platform
+    #
+    "enterprise_assessment": enterprise_assessment,
+
+    #
+    # Assessment Runtime Engine
+    #
     "assessment": assessment,
 
     "migration": migration,

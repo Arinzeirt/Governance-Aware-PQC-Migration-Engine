@@ -8,18 +8,21 @@ def show():
         unsafe_allow_html=True,
     )
 
-    left, centre, right = st.columns([2,3,2])
+    left, centre, right = st.columns([2, 3, 2])
 
     with centre:
 
         if st.button(
-            "Start Basic Assessment →",
+            "Start Enterprise Assessment →",
             type="primary",
             use_container_width=True,
             key="hero_cta",
         ):
 
-            st.session_state.page = "registration"
+            #
+            # Launch Enterprise Assessment
+            #
+            st.session_state.page = "enterprise_assessment"
 
             st.rerun()
 
@@ -29,3 +32,4 @@ def show():
     )
 
     st.divider()
+

@@ -23,6 +23,7 @@ TECHNOLOGIES
         c1, c2, c3, c4, c5 = st.columns([1, 1, 1, 1, 2])
 
         with c1:
+
             st.button(
                 "Research",
                 use_container_width=True,
@@ -30,6 +31,7 @@ TECHNOLOGIES
             )
 
         with c2:
+
             st.button(
                 "Frameworks",
                 use_container_width=True,
@@ -37,6 +39,7 @@ TECHNOLOGIES
             )
 
         with c3:
+
             st.button(
                 "About",
                 use_container_width=True,
@@ -44,6 +47,7 @@ TECHNOLOGIES
             )
 
         with c4:
+
             st.button(
                 "Contact",
                 use_container_width=True,
@@ -51,11 +55,19 @@ TECHNOLOGIES
             )
 
         with c5:
-            st.button(
-                "Start Basic Assessment",
+
+            if st.button(
+                "Start Enterprise Assessment",
                 type="primary",
                 use_container_width=True,
                 key="nav_start_assessment",
-            )
+            ):
+
+                #
+                # Launch Enterprise Assessment
+                #
+                st.session_state.page = "enterprise_assessment"
+
+                st.rerun()
 
     st.divider()

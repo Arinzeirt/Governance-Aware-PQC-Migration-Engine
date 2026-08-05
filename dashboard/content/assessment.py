@@ -3,29 +3,29 @@ STEPS = [
     {
         "id": 1,
         "key": "overview",
-        "title": "Overview",
-        "description": "Organisation profile",
+        "title": "Enterprise Profile",
+        "description": "Establish organisational context",
     },
 
     {
         "id": 2,
         "key": "technology",
-        "title": "Technology",
-        "description": "Technology landscape",
+        "title": "Technology Landscape",
+        "description": "Identify enterprise technologies",
     },
 
     {
         "id": 3,
         "key": "cryptography",
-        "title": "Cryptography",
-        "description": "Cryptography overview",
+        "title": "Cryptography Overview",
+        "description": "Discover cryptographic assets",
     },
 
     {
         "id": 4,
         "key": "configuration",
-        "title": "Configuration",
-        "description": "Assessment configuration",
+        "title": "Assessment Configuration",
+        "description": "Configure assessment scope",
     },
 
 ]

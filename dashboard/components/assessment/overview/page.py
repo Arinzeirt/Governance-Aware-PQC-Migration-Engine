@@ -1,12 +1,6 @@
-import streamlit as st
+from components.assessment.layout import show as assessment_layout
 
 from .form import show as organisation_form
-
-from components.assessment.summary_panel import show as summary_panel
-
-from components.assessment.research_brief import (
-    show as research_brief,
-)
 
 from components.assessment.research_brief.briefs import (
     OVERVIEW,
@@ -15,55 +9,12 @@ from components.assessment.research_brief.briefs import (
 
 def show():
 
-    #
-    # Top Layout
-    #
+    return assessment_layout(
 
-    left, right = st.columns(
-        [7, 3],
-        gap="large",
+        current_step="Enterprise Profile",
+
+        form=organisation_form,
+
+        research=OVERVIEW,
+
     )
-
-    with left:
-
-        result = organisation_form()
-
-    with right:
-
-        summary_panel(
-            current_step="Overview",
-            completed=result["completed"],
-            total=result["total"],
-        )
-
-    #
-    # Research Brief
-    #
-
-    left, right = st.columns(
-        [7, 3],
-        gap="large",
-    )
-
-    with left:
-
-        research_brief(
-            OVERVIEW,
-        )
-
-    with right:
-
-        #
-        # Keep sidebar alignment.
-        #
-        st.empty()
-
-    return {
-
-        "can_continue":
-            result["can_continue"],
-
-        "on_continue":
-            result["on_continue"],
-
-    }
