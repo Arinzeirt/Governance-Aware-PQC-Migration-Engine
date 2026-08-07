@@ -1,4 +1,4 @@
-from components.landing.navigation import show as navigation
+import streamlit as st
 
 from components.assessment.shell import show as assessment_shell
 
@@ -6,25 +6,55 @@ from components.assessment.overview.page import (
     show as overview,
 )
 
+from components.assessment.technology.page import (
+    show as technology,
+)
+
+from components.assessment.cryptography.page import (
+    show as cryptography,
+)
+
+from components.assessment.governance.page import (
+    show as governance,
+)
+
 
 def show():
 
-    #
-    # Global Navigation
-    #
+    if "assessment" not in st.session_state:
 
-    navigation()
+        st.session_state.assessment = {
+            "step": 1,
+        }
 
-    #
-    # Enterprise Assessment
-    #
+    step = st.session_state.assessment.get(
+        "step",
+        1,
+    )
+
+    pages = {
+
+        1: overview,
+
+        2: technology,
+
+        3: cryptography,
+
+        4: governance,
+
+    }
 
     assessment_shell(
 
         {
-            "step": 1,
-            "renderer": overview,
+
+            "step": step,
+
+            "renderer": pages.get(
+                step,
+                overview,
+            ),
+
         }
 
     )
-

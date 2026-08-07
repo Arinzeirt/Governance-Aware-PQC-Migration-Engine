@@ -17,15 +17,15 @@ STEPS = [
     {
         "id": 3,
         "key": "cryptography",
-        "title": "Cryptography Overview",
-        "description": "Discover cryptographic assets",
+        "title": "Cryptographic Posture",
+        "description": "Assess enterprise cryptography",
     },
 
     {
         "id": 4,
-        "key": "configuration",
-        "title": "Assessment Configuration",
-        "description": "Configure assessment scope",
+        "key": "governance",
+        "title": "Governance & Risk",
+        "description": "Evaluate governance readiness",
     },
 
 ]

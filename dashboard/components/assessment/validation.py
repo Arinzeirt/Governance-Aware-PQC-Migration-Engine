@@ -9,6 +9,10 @@ def valid_email(email):
     return bool(re.match(EMAIL_REGEX, email))
 
 
+# ==========================================================
+# Enterprise Profile
+# ==========================================================
+
 def overview_complete(data):
 
     required = [
@@ -22,12 +26,88 @@ def overview_complete(data):
 
     ]
 
-    completed = 0
-
-    for field in required:
-
-        if data.get(field):
-
-            completed += 1
+    completed = sum(
+        1 for field in required
+        if data.get(field)
+    )
 
     return completed, len(required)
+
+
+# ==========================================================
+# Technology Landscape
+# ==========================================================
+
+def technology_complete(data):
+
+    required = [
+
+        "deployment_model",
+        "cloud_provider",
+        "identity_provider",
+        "pki",
+        "hsm",
+        "customer_apps",
+        "public_api",
+
+    ]
+
+    completed = sum(
+        1 for field in required
+        if data.get(field)
+    )
+
+    return completed, len(required)
+
+
+# ==========================================================
+# Cryptographic Posture
+# ==========================================================
+
+def cryptography_complete(data):
+
+    required = [
+
+        "crypto_algorithms",
+        "crypto_technologies",
+        "crypto_business_systems",
+        "pki_maturity",
+        "certificate_inventory",
+        "crypto_inventory",
+        "crypto_agility",
+        "long_term_data",
+
+    ]
+
+    completed = sum(
+        1 for field in required
+        if data.get(field)
+    )
+
+    return completed, len(required)
+
+
+# ==========================================================
+# Governance & Risk
+# ==========================================================
+
+def governance_complete(data):
+
+    required = [
+
+        "security_governance",
+        "pqc_strategy",
+        "crypto_policy",
+        "risk_register",
+        "compliance_program",
+        "executive_support",
+
+    ]
+
+    completed = sum(
+        1 for field in required
+        if data.get(field)
+    )
+
+    return completed, len(required)
+

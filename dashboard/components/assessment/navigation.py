@@ -2,10 +2,17 @@ import streamlit as st
 
 
 STEP_LABELS = {
+
     1: "Continue to Technology Landscape →",
-    2: "Continue to Cryptography Overview →",
-    3: "Continue to Assessment Configuration →",
-    4: "Generate Quantum Readiness Assessment →",
+
+    2: "Continue to Cryptographic Posture →",
+
+    3: "Continue to Governance & Risk →",
+
+    4: "Continue to Executive Review →",
+
+    5: "Generate Enterprise Assessment →",
+
 }
 
 
@@ -29,7 +36,7 @@ def show(
     left, spacer, right = st.columns([3, 3, 4])
 
     #
-    # Back
+    # Back Button
     #
     with left:
 
@@ -42,21 +49,26 @@ def show(
             ):
 
                 st.session_state.assessment["step"] -= 1
+
                 st.rerun()
 
     #
     # Spacer
     #
     with spacer:
+
         st.empty()
 
     #
-    # Continue
+    # Continue Button
     #
     with right:
 
         if st.button(
-            STEP_LABELS[current_step],
+            STEP_LABELS.get(
+                current_step,
+                "Continue →",
+            ),
             key="assessment_next",
             type="primary",
             use_container_width=True,
@@ -64,24 +76,15 @@ def show(
         ):
 
             if on_continue:
+
                 on_continue()
 
             #
-            # TEMPORARY
-            # Technology Landscape is not yet implemented.
+            # Advance to next assessment step
             #
-            if current_step == 1:
+            st.session_state.assessment["step"] += 1
 
-                st.info(
-                    "Technology Landscape is currently under development. This concludes the current assessment preview."
-                )
-
-            else:
-
-                if current_step < 4:
-                    st.session_state.assessment["step"] += 1
-
-                st.rerun()
+            st.rerun()
 
     #
     # Space before footer
