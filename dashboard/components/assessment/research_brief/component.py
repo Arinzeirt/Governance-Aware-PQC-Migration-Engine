@@ -1,105 +1,43 @@
-import os
 import streamlit as st
-from PIL import UnidentifiedImageError
 
 
 def show(brief):
 
     with st.container(border=True):
 
-        left, right = st.columns([2, 3], gap="large")
+        st.caption(
+            f"◈ {brief.category.upper()}"
+        )
 
-        #
-        # Illustration
-        #
-
-        with left:
-
-            try:
-
-                if (
-                    brief.image
-                    and os.path.exists(brief.image)
-                    and os.path.getsize(brief.image) > 0
-                ):
-
-                    st.image(
-                        brief.image,
-                        width="stretch",
-                    )
-
-                else:
-
-                    raise FileNotFoundError
-
-            except (
-                FileNotFoundError,
-                UnidentifiedImageError,
-                OSError,
-            ):
-
-                st.markdown(
-                    """
+        st.markdown(
+            f"""
 <div style="
-height:260px;
-display:flex;
-align-items:center;
-justify-content:center;
-background:linear-gradient(135deg,#0B2447,#19376D);
-border-radius:18px;
-font-size:82px;
-">
-🛡️
-</div>
-""",
-                    unsafe_allow_html=True,
-                )
-
-        #
-        # Content
-        #
-
-        with right:
-
-            st.caption(brief.category.upper())
-
-            st.markdown(
-                f"""
-<h1 style="
-font-size:3rem;
+font-size:1.45rem;
 font-weight:800;
-line-height:1.0;
-margin-bottom:18px;
+line-height:1.05;
+margin:2px 0 8px 0;
 ">
 {brief.headline.replace(chr(10), "<br>")}
-</h1>
+</div>
 """,
-                unsafe_allow_html=True,
-            )
+            unsafe_allow_html=True,
+        )
 
-            st.markdown(
-                f"""
+        st.markdown(
+            f"""
 <div style="
-font-size:1.08rem;
-line-height:1.8;
+font-size:0.86rem;
+line-height:1.45;
 color:#BFC8D6;
-max-width:640px;
-margin-bottom:30px;
+max-width:900px;
+margin-bottom:8px;
 ">
 {brief.message}
 </div>
 """,
-                unsafe_allow_html=True,
-            )
+            unsafe_allow_html=True,
+        )
 
-            st.markdown("---")
-
-            c1, c2 = st.columns([1, 2])
-
-            with c1:
-                st.caption("📖 Research Brief")
-
-            with c2:
-                st.caption(
-                    f"Estimated Reading Time: {brief.reading_time}"
-                )
+        st.caption(
+            f"📖 Research Brief  ·  {brief.reading_time}"
+        )

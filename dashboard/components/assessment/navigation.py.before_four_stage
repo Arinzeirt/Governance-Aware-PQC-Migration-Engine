@@ -4,7 +4,7 @@ import streamlit as st
 STEP_LABELS = {
 
     1:
-        "Continue to Governance →",
+        "Continue to Business & Data Exposure →",
 
     2:
         "Continue to Technology Landscape →",
@@ -13,7 +13,10 @@ STEP_LABELS = {
         "Continue to Cryptographic Posture →",
 
     4:
-        "Generate Executive Assessment →",
+        "Continue to Assessment Review →",
+
+    5:
+        "View Assessment Results →",
 
 }
 
@@ -39,10 +42,7 @@ def show(
                 use_container_width=True,
             ):
 
-                st.session_state.assessment[
-                    "step"
-                ] -= 1
-
+                st.session_state.assessment["step"] -= 1
                 st.rerun()
 
     with spacer:
@@ -66,12 +66,9 @@ def show(
 
                 on_continue()
 
-            if current_step < 4:
+            if current_step < 5:
 
-                st.session_state.assessment[
-                    "step"
-                ] += 1
-
+                st.session_state.assessment["step"] += 1
                 st.rerun()
 
             else:

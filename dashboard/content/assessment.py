@@ -2,30 +2,38 @@ STEPS = [
 
     {
         "id": 1,
-        "key": "overview",
-        "title": "Enterprise Profile",
-        "description": "Establish organisational context",
+        "title": "Enterprise Overview",
+        "description": (
+            "Establish the organisation's business "
+            "and operating context"
+        ),
     },
 
     {
         "id": 2,
-        "key": "technology",
-        "title": "Technology Landscape",
-        "description": "Identify enterprise technologies",
+        "title": "Governance",
+        "description": (
+            "Establish governance, accountability "
+            "and decision ownership"
+        ),
     },
 
     {
         "id": 3,
-        "key": "cryptography",
-        "title": "Cryptographic Posture",
-        "description": "Assess enterprise cryptography",
+        "title": "Technology Landscape",
+        "description": (
+            "Establish the organisation's "
+            "technology environment"
+        ),
     },
 
     {
         "id": 4,
-        "key": "governance",
-        "title": "Governance & Risk",
-        "description": "Evaluate governance readiness",
+        "title": "Cryptographic Posture",
+        "description": (
+            "Establish cryptographic visibility "
+            "and dependencies"
+        ),
     },
 
 ]

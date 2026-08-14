@@ -1,0 +1,33 @@
+STEPS = [
+
+    {
+        "id": 1,
+        "title": "Governance",
+        "description": "Establish accountability and governance posture",
+    },
+
+    {
+        "id": 2,
+        "title": "Business & Data Exposure",
+        "description": "Establish business context and data exposure",
+    },
+
+    {
+        "id": 3,
+        "title": "Technology Landscape",
+        "description": "Establish the technology environment",
+    },
+
+    {
+        "id": 4,
+        "title": "Cryptographic Posture",
+        "description": "Establish cryptographic visibility and dependencies",
+    },
+
+    {
+        "id": 5,
+        "title": "Assessment Review",
+        "description": "Review the assessment before results",
+    },
+
+]

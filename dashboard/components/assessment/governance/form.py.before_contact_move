@@ -15,7 +15,7 @@ def show():
     existing = load("governance")
 
     # =========================================================
-    # GOVERNANCE
+    # Governance
     # =========================================================
 
     with st.container(border=True):
@@ -49,7 +49,7 @@ def show():
         )
 
         # =====================================================
-        # GOVERNANCE FOUNDATION
+        # Assessment Contact
         # =====================================================
 
         st.markdown(
@@ -57,7 +57,82 @@ def show():
             <div style="
                 font-size:0.90rem;
                 font-weight:700;
-                margin:12px 0 7px 0;
+                margin-bottom:7px;
+            ">
+                Assessment Contact
+            </div>
+            """,
+            unsafe_allow_html=True,
+        )
+
+        contact_left, contact_right = st.columns(
+            2,
+            gap="medium",
+        )
+
+        with contact_left:
+
+            st.text_input(
+                "Full Name *",
+                key="respondent_name",
+                value=existing.get(
+                    "respondent_name",
+                    "",
+                ),
+                placeholder="Full name",
+            )
+
+        with contact_right:
+
+            roles = [
+                "Executive / C-Suite",
+                "CIO / CTO",
+                "CISO / Security Lead",
+                "IT / Infrastructure",
+                "Risk / Compliance",
+                "Architecture / Engineering",
+                "Audit",
+                "Other",
+            ]
+
+            existing_role = existing.get(
+                "respondent_role"
+            )
+
+            role_index = (
+                roles.index(existing_role)
+                if existing_role in roles
+                else None
+            )
+
+            st.selectbox(
+                "Role / Job Title *",
+                roles,
+                index=role_index,
+                key="respondent_role",
+                placeholder="Select role",
+            )
+
+        st.text_input(
+            "Business Email *",
+            key="respondent_email",
+            value=existing.get(
+                "respondent_email",
+                "",
+            ),
+            placeholder="name@company.com",
+        )
+
+        # =====================================================
+        # Governance Foundation
+        # =====================================================
+
+        st.markdown(
+            """
+            <div style="
+                font-size:0.90rem;
+                font-weight:700;
+                margin:14px 0 7px 0;
             ">
                 Governance Foundation
             </div>
@@ -147,7 +222,7 @@ def show():
             )
 
         # =====================================================
-        # POST-QUANTUM GOVERNANCE
+        # Post-Quantum Governance
         # =====================================================
 
         st.markdown(
@@ -220,10 +295,27 @@ def show():
             )
 
     # =========================================================
-    # PERSIST
+    # Persist
     # =========================================================
 
     data = {
+
+        "respondent_name":
+            st.session_state.get(
+                "respondent_name",
+                "",
+            ),
+
+        "respondent_role":
+            st.session_state.get(
+                "respondent_role"
+            ),
+
+        "respondent_email":
+            st.session_state.get(
+                "respondent_email",
+                "",
+            ),
 
         "security_governance":
             st.session_state.get(
@@ -281,10 +373,6 @@ def show():
         "governance",
         data,
     )
-
-    # =========================================================
-    # VALIDATION
-    # =========================================================
 
     completed, total = governance_complete(
         data

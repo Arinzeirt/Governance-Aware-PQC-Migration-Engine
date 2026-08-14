@@ -8,16 +8,16 @@ from components.assessment.overview.page import (
     show as overview,
 )
 
-from components.assessment.governance.page import (
-    show as governance,
-)
-
 from components.assessment.technology.page import (
     show as technology,
 )
 
 from components.assessment.cryptography.page import (
     show as cryptography,
+)
+
+from components.assessment.governance.page import (
+    show as governance,
 )
 
 from components.assessment.results.page import (
@@ -33,17 +33,12 @@ def show():
             "step": 1,
         }
 
-    # ---------------------------------------------------------
-    # Executive results
-    # ---------------------------------------------------------
-
     if st.session_state.get(
         "assessment_results",
         False,
     ):
 
         results()
-
         return
 
     step = st.session_state.assessment.get(
@@ -52,21 +47,15 @@ def show():
     )
 
     pages = {
-
         1: overview,
-
-        2: governance,
-
-        3: technology,
-
-        4: cryptography,
-
+        2: technology,
+        3: cryptography,
+        4: governance,
     }
 
     assessment_shell(
         {
             "step": step,
-
             "renderer": pages.get(
                 step,
                 overview,

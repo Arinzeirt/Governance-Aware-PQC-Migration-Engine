@@ -1,26 +1,14 @@
 import streamlit as st
 
 from components.assessment.status import readiness_percentage
-from components.assessment.store import (
-    last_saved,
-    assessment_id,
-)
+from components.assessment.store import last_saved, assessment_id
 
 
 STEP_LABELS = {
-
-    1:
-        "Continue to Governance →",
-
-    2:
-        "Continue to Technology Landscape →",
-
-    3:
-        "Continue to Cryptographic Posture →",
-
-    4:
-        "Generate Executive Assessment →",
-
+    1: "Continue to Technology Landscape →",
+    2: "Continue to Cryptographic Posture →",
+    3: "Continue to Governance & Risk →",
+    4: "View Assessment Results →",
 }
 
 
@@ -106,10 +94,7 @@ def show(
 
             st.markdown(
                 f"""
-                <div style="
-                    font-size:1rem;
-                    font-weight:750;
-                ">
+                <div style="font-size:1rem;font-weight:750;">
                     {completed}/{total}
                 </div>
 
@@ -174,9 +159,9 @@ def show(
             unsafe_allow_html=True,
         )
 
-        # -----------------------------------------------------
+        #
         # Back
-        # -----------------------------------------------------
+        #
 
         if current_step > 1:
 
@@ -186,15 +171,12 @@ def show(
                 use_container_width=True,
             ):
 
-                st.session_state.assessment[
-                    "step"
-                ] -= 1
-
+                st.session_state.assessment["step"] -= 1
                 st.rerun()
 
-        # -----------------------------------------------------
-        # Continue
-        # -----------------------------------------------------
+        #
+        # Final / Continue action
+        #
 
         if st.button(
             STEP_LABELS.get(
@@ -208,23 +190,26 @@ def show(
         ):
 
             if on_continue:
-
                 on_continue()
 
             if current_step < 4:
 
-                st.session_state.assessment[
-                    "step"
-                ] += 1
-
+                st.session_state.assessment["step"] += 1
                 st.rerun()
 
             else:
+
+                # ------------------------------------------
+                # Step 4 is complete.
+                # Move directly into the EQMP result layer.
+                # ------------------------------------------
 
                 st.session_state[
                     "assessment_results"
                 ] = True
 
+                # Remove any older preview state so that
+                # the result route is unambiguous.
                 st.session_state.pop(
                     "preview",
                     None,
@@ -238,14 +223,16 @@ def show(
                 "Complete all required fields to continue."
             )
 
-        elif current_step == 4:
-
-            st.caption(
-                "Generate your executive quantum-readiness assessment."
-            )
-
         else:
 
-            st.caption(
-                "All required fields completed."
-            )
+            if current_step == 4:
+
+                st.caption(
+                    "Assessment complete. View your EQMP results."
+                )
+
+            else:
+
+                st.caption(
+                    "All required fields completed."
+                )

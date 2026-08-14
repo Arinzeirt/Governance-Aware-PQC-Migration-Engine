@@ -1,13 +1,7 @@
 import streamlit as st
 
-from components.assessment.store import (
-    save,
-    load,
-)
-
-from components.assessment.validation import (
-    cryptography_complete,
-)
+from components.assessment.store import save, load
+from components.assessment.validation import cryptography_complete
 
 
 def show():
@@ -19,10 +13,10 @@ def show():
         st.markdown("## Cryptographic Posture")
 
         st.caption(
-            "Provide information about your organisation's current cryptographic environment."
+            "Identify the cryptographic mechanisms, assets and dependencies that influence quantum exposure."
         )
 
-        left, right = st.columns(2)
+        left, right = st.columns(2, gap="small")
 
         with left:
 
@@ -44,11 +38,11 @@ def show():
                     "crypto_algorithms",
                     [],
                 ),
-                placeholder="Select one or more algorithms",
+                placeholder="Select algorithms",
             )
 
             st.multiselect(
-                "Cryptographic Technologies in Use *",
+                "Cryptographic Technologies *",
                 [
                     "TLS / SSL",
                     "PKI",
@@ -65,11 +59,11 @@ def show():
                     "crypto_technologies",
                     [],
                 ),
-                placeholder="Select one or more technologies",
+                placeholder="Select technologies",
             )
 
             st.multiselect(
-                "Business Systems Using Cryptography *",
+                "Critical Systems Using Cryptography *",
                 [
                     "Internet Banking",
                     "Mobile Applications",
@@ -92,7 +86,7 @@ def show():
                     "crypto_business_systems",
                     [],
                 ),
-                placeholder="Select applicable business systems",
+                placeholder="Select critical systems",
             )
 
         with right:
@@ -107,7 +101,7 @@ def show():
                 ],
                 key="pki_maturity",
                 index=None,
-                placeholder="Select PKI Maturity",
+                placeholder="Select PKI maturity",
             )
 
             st.selectbox(
@@ -120,7 +114,7 @@ def show():
                 ],
                 key="certificate_inventory",
                 index=None,
-                placeholder="Select Inventory Status",
+                placeholder="Select inventory status",
             )
 
             st.radio(
@@ -138,14 +132,13 @@ def show():
             )
 
             st.radio(
-                "Sensitive Long-Term Data *",
-                ["Yes", "No"],
+                "Long-Term Sensitive Data *",
+                ["Yes", "No", "Unknown"],
                 horizontal=True,
                 key="long_term_data",
             )
 
     data = {
-
         "crypto_algorithms":
             st.session_state.get(
                 "crypto_algorithms",
@@ -165,20 +158,29 @@ def show():
             ),
 
         "pki_maturity":
-            st.session_state.get("pki_maturity"),
+            st.session_state.get(
+                "pki_maturity"
+            ),
 
         "certificate_inventory":
-            st.session_state.get("certificate_inventory"),
+            st.session_state.get(
+                "certificate_inventory"
+            ),
 
         "crypto_inventory":
-            st.session_state.get("crypto_inventory"),
+            st.session_state.get(
+                "crypto_inventory"
+            ),
 
         "crypto_agility":
-            st.session_state.get("crypto_agility"),
+            st.session_state.get(
+                "crypto_agility"
+            ),
 
         "long_term_data":
-            st.session_state.get("long_term_data"),
-
+            st.session_state.get(
+                "long_term_data"
+            ),
     }
 
     save(
@@ -186,21 +188,16 @@ def show():
         data,
     )
 
-    completed, total = cryptography_complete(data)
+    completed, total = cryptography_complete(
+        data
+    )
 
     return {
-
         "completed": completed,
-
         "total": total,
-
-        "can_continue":
-            completed == total,
-
-        "on_continue":
-            lambda: save(
-                "cryptography",
-                data,
-            ),
-
+        "can_continue": completed == total,
+        "on_continue": lambda: save(
+            "cryptography",
+            data,
+        ),
     }

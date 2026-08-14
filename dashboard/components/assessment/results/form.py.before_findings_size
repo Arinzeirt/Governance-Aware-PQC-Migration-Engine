@@ -1,0 +1,646 @@
+import streamlit as st
+
+from components.assessment.results.calculator import (
+    calculate,
+)
+
+
+def show():
+
+    assessment = st.session_state.get(
+        "assessment",
+        {},
+    )
+
+    result = calculate(assessment)
+
+    assessment_id = st.session_state.get(
+        "assessment_id",
+        "Pending",
+    )
+
+    overall_score = result["overall_score"]
+    overall_label = result["overall_label"]
+
+    governance_score = result["governance"]
+    crypto_score = result["cryptography"]
+    technology_score = result["technology"]
+    migration_score = result["migration"]
+
+    threat_level = result["threat_level"]
+    findings = result["findings"]
+    actions = result["actions"]
+
+    st.markdown(
+        """
+<style>
+
+.eqmp-result {
+    max-width: 1180px;
+    margin: 0 auto;
+}
+
+/* =========================================================
+   Header
+   ========================================================= */
+
+.eqmp-result-title {
+    font-size: 22px;
+    font-weight: 700;
+    line-height: 1.1;
+    margin-top: 3px;
+}
+
+.eqmp-result-brand button {
+    font-size: 1.05rem !important;
+    font-weight: 800 !important;
+    letter-spacing: -0.02em !important;
+    padding: 0 !important;
+    min-height: 30px !important;
+    border: none !important;
+    background: transparent !important;
+}
+
+.eqmp-result-brand button:hover {
+    border: none !important;
+    background: transparent !important;
+}
+
+.eqmp-id-label {
+    font-size: 10px;
+    letter-spacing: 1px;
+    opacity: .50;
+    margin-bottom: 5px;
+}
+
+.eqmp-id {
+    font-family: monospace;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+
+/* =========================================================
+   Primary executive cards
+   ========================================================= */
+
+.eqmp-hero {
+    border: 1px solid rgba(255,255,255,.13);
+    border-radius: 8px;
+    padding: 14px 17px;
+    min-height: 78px;
+}
+
+.eqmp-hero-label {
+    font-size: 10px;
+    letter-spacing: 1px;
+    opacity: .52;
+    margin-bottom: 5px;
+}
+
+.eqmp-score {
+    font-size: 38px;
+    font-weight: 750;
+    line-height: 1;
+}
+
+.eqmp-threat {
+    font-size: 23px;
+    font-weight: 700;
+    line-height: 1;
+    margin-top: 7px;
+}
+
+.eqmp-status {
+    font-size: 18px;
+    font-weight: 650;
+    margin-top: 7px;
+}
+
+.eqmp-score-label {
+    font-size: 11px;
+    font-weight: 600;
+    margin-top: 5px;
+    opacity: .80;
+}
+
+
+/* =========================================================
+   Executive overview
+   ========================================================= */
+
+.eqmp-overview {
+    border: 1px solid rgba(255,255,255,.12);
+    border-radius: 8px;
+    padding: 11px 17px;
+    margin-top: 10px;
+}
+
+.eqmp-overview-title {
+    font-size: 12px;
+    font-weight: 700;
+    margin-bottom: 5px;
+}
+
+.eqmp-overview-text {
+    font-size: 12px;
+    line-height: 1.45;
+    opacity: .78;
+}
+
+
+/* =========================================================
+   Assessment dimensions
+   ========================================================= */
+
+.eqmp-dimension {
+    border: 1px solid rgba(255,255,255,.12);
+    border-radius: 8px;
+    padding: 10px 13px;
+    min-height: 72px;
+}
+
+.eqmp-dimension-title {
+    font-size: 10px;
+    letter-spacing: .7px;
+    opacity: .55;
+    margin-bottom: 5px;
+}
+
+.eqmp-dimension-score {
+    font-size: 21px;
+    font-weight: 700;
+    line-height: 1;
+}
+
+.eqmp-progress {
+    height: 5px;
+    background: rgba(255,255,255,.10);
+    border-radius: 5px;
+    margin-top: 8px;
+    overflow: hidden;
+}
+
+.eqmp-progress-fill {
+    height: 100%;
+    background: #2196f3;
+    border-radius: 5px;
+}
+
+
+/* =========================================================
+   Findings / Actions
+   ========================================================= */
+
+.eqmp-section {
+    border: 1px solid rgba(255,255,255,.12);
+    border-radius: 8px;
+    padding: 10px 16px;
+    margin-top: 10px;
+}
+
+.eqmp-section-title {
+    font-size: 12px;
+    font-weight: 700;
+    margin-bottom: 5px;
+}
+
+.eqmp-finding {
+    font-size: 10.5px;
+    line-height: 1.35;
+    margin: 2px 0;
+    opacity: .78;
+}
+
+.eqmp-action {
+    font-size: 10.5px;
+    line-height: 1.35;
+    margin: 2px 0;
+    opacity: .78;
+}
+
+.eqmp-action-sub {
+    font-size: 10.5px;
+    opacity: .55;
+    margin-bottom: 6px;
+}
+
+.eqmp-signin {
+    text-align: center;
+    font-size: 10.5px;
+    opacity: .55;
+    margin-top: 5px;
+}
+
+div.stButton > button {
+    min-height: 37px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+</style>
+""",
+        unsafe_allow_html=True,
+    )
+
+
+    # =========================================================
+    # Header
+    # =========================================================
+
+    brand, title, identifier = st.columns(
+        [1.5, 5, 2.5],
+        gap="small",
+    )
+
+    with brand:
+
+        st.markdown(
+            '<div class="eqmp-result-brand">',
+            unsafe_allow_html=True,
+        )
+
+        if st.button(
+            "EQMP",
+            key="result_nav_home",
+            use_container_width=False,
+        ):
+
+            st.session_state.page = "landing"
+            st.rerun()
+
+        st.markdown(
+            "</div>",
+            unsafe_allow_html=True,
+        )
+
+    with title:
+
+        st.markdown(
+            """
+<div class="eqmp-result-title">
+Quantum Readiness Assessment
+</div>
+""",
+            unsafe_allow_html=True,
+        )
+
+    with identifier:
+
+        st.markdown(
+            f"""
+<div class="eqmp-id-label">
+ASSESSMENT ID
+</div>
+
+<div class="eqmp-id">
+{assessment_id}
+</div>
+""",
+            unsafe_allow_html=True,
+        )
+
+
+    # =========================================================
+    # Executive outcome cards
+    # =========================================================
+
+    left, middle, right = st.columns(
+        [1.2, 1, 1],
+        gap="medium",
+    )
+
+    with left:
+
+        st.markdown(
+            f"""
+<div class="eqmp-hero">
+
+<div class="eqmp-hero-label">
+OVERALL READINESS
+</div>
+
+<div class="eqmp-score">
+{overall_score}%
+</div>
+
+<div class="eqmp-score-label">
+{overall_label}
+</div>
+
+</div>
+""",
+            unsafe_allow_html=True,
+        )
+
+    with middle:
+
+        if threat_level == "High":
+
+            exposure_label = "Action Recommended"
+
+        elif threat_level == "Elevated":
+
+            exposure_label = "Attention Required"
+
+        else:
+
+            exposure_label = "Monitor"
+
+        st.markdown(
+            f"""
+<div class="eqmp-hero">
+
+<div class="eqmp-hero-label">
+QUANTUM EXPOSURE
+</div>
+
+<div class="eqmp-threat">
+{threat_level}
+</div>
+
+<div class="eqmp-score-label">
+{exposure_label}
+</div>
+
+</div>
+""",
+            unsafe_allow_html=True,
+        )
+
+    with right:
+
+        st.markdown(
+            """
+<div class="eqmp-hero">
+
+<div class="eqmp-hero-label">
+ASSESSMENT STATUS
+</div>
+
+<div class="eqmp-status">
+Complete
+</div>
+
+<div class="eqmp-score-label">
+Executive assessment generated
+</div>
+
+</div>
+""",
+            unsafe_allow_html=True,
+        )
+
+
+    # =========================================================
+    # Executive Overview
+    # =========================================================
+
+    if threat_level == "High":
+
+        overview_text = (
+            f"Your organisation currently demonstrates "
+            f"{overall_label.lower()}. The assessment indicates "
+            f"material post-quantum exposure and migration gaps "
+            f"that should be addressed proactively."
+        )
+
+    elif threat_level == "Elevated":
+
+        overview_text = (
+            f"Your organisation demonstrates "
+            f"{overall_label.lower()}, with areas requiring "
+            f"attention before a broader post-quantum migration."
+        )
+
+    else:
+
+        overview_text = (
+            f"Your organisation demonstrates "
+            f"{overall_label.lower()}. Current controls provide "
+            f"a reasonable foundation, but continued discovery "
+            f"and migration planning remain important."
+        )
+
+    st.markdown(
+        f"""
+<div class="eqmp-overview">
+
+<div class="eqmp-overview-title">
+Executive Overview
+</div>
+
+<div class="eqmp-overview-text">
+{overview_text}
+</div>
+
+</div>
+""",
+        unsafe_allow_html=True,
+    )
+
+
+    # =========================================================
+    # Four assessment dimensions
+    # =========================================================
+
+    st.markdown(
+        '<div style="height:8px"></div>',
+        unsafe_allow_html=True,
+    )
+
+    g, c, t, m = st.columns(
+        4,
+        gap="small",
+    )
+
+    dimensions = [
+
+        (
+            g,
+            "GOVERNANCE & RISK",
+            governance_score,
+        ),
+
+        (
+            c,
+            "CRYPTOGRAPHIC POSTURE",
+            crypto_score,
+        ),
+
+        (
+            t,
+            "TECHNOLOGY LANDSCAPE",
+            technology_score,
+        ),
+
+        (
+            m,
+            "MIGRATION READINESS",
+            migration_score,
+        ),
+
+    ]
+
+    for column, label, score in dimensions:
+
+        with column:
+
+            st.markdown(
+                f"""
+<div class="eqmp-dimension">
+
+<div class="eqmp-dimension-title">
+{label}
+</div>
+
+<div class="eqmp-dimension-score">
+{score}%
+</div>
+
+<div class="eqmp-progress">
+<div class="eqmp-progress-fill"
+style="width:{score}%;">
+</div>
+</div>
+
+</div>
+""",
+                unsafe_allow_html=True,
+            )
+
+
+    # =========================================================
+    # Key Findings
+    # =========================================================
+
+    st.markdown(
+        """
+<div class="eqmp-section">
+
+<div class="eqmp-section-title">
+Key Findings
+</div>
+""",
+        unsafe_allow_html=True,
+    )
+
+    for finding in findings[:3]:
+
+        st.markdown(
+            f"""
+<div class="eqmp-finding">
+• {finding}
+</div>
+""",
+            unsafe_allow_html=True,
+        )
+
+    st.markdown(
+        "</div>",
+        unsafe_allow_html=True,
+    )
+
+
+    # =========================================================
+    # Executive Next Step
+    # =========================================================
+
+    st.markdown(
+        """
+<div style="
+    text-align:center;
+    margin:10px 0 7px 0;
+">
+
+<div style="
+    font-size:.82rem;
+    font-weight:750;
+">
+
+Assessment Complete
+
+</div>
+
+<div style="
+    color:#8a94a5;
+    font-size:.66rem;
+    margin-top:3px;
+">
+
+The next step is a full evidence-based quantum audit.
+
+</div>
+
+</div>
+""",
+        unsafe_allow_html=True,
+    )
+
+
+    # =========================================================
+    # Primary / Supporting Actions
+    # =========================================================
+
+    action_left, action_right = st.columns(
+        2,
+        gap="medium",
+    )
+
+
+    # ---------------------------------------------------------
+    # PRIMARY ACTION
+    # ---------------------------------------------------------
+
+    with action_left:
+
+        if st.button(
+            "Book Full Quantum Audit →",
+            type="primary",
+            use_container_width=True,
+            key="result_book_audit",
+        ):
+
+            st.session_state[
+                "eqmp_audit_requested"
+            ] = True
+
+
+    # ---------------------------------------------------------
+    # SUPPORTING ACTION
+    # ---------------------------------------------------------
+
+    with action_right:
+
+        if st.button(
+            "Download Report",
+            use_container_width=True,
+            key="result_download_report",
+        ):
+
+            st.session_state[
+                "eqmp_download_requested"
+            ] = True
+
+
+    # =========================================================
+    # Sign in
+    # =========================================================
+
+    st.markdown(
+        '<div class="eqmp-signin">'
+        'Already have an EQMP account?'
+        '</div>',
+        unsafe_allow_html=True,
+    )
+
+
+    if st.button(
+        "Sign in →",
+        use_container_width=True,
+        key="result_sign_in",
+    ):
+
+        st.session_state[
+            "eqmp_login_requested"
+        ] = True

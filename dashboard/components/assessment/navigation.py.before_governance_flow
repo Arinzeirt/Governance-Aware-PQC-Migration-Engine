@@ -2,19 +2,10 @@ import streamlit as st
 
 
 STEP_LABELS = {
-
-    1:
-        "Continue to Governance →",
-
-    2:
-        "Continue to Technology Landscape →",
-
-    3:
-        "Continue to Cryptographic Posture →",
-
-    4:
-        "Generate Executive Assessment →",
-
+    1: "Continue to Technology Landscape →",
+    2: "Continue to Cryptographic Posture →",
+    3: "Continue to Governance & Risk →",
+    4: "View Assessment Results →",
 }
 
 
@@ -39,10 +30,7 @@ def show(
                 use_container_width=True,
             ):
 
-                st.session_state.assessment[
-                    "step"
-                ] -= 1
-
+                st.session_state.assessment["step"] -= 1
                 st.rerun()
 
     with spacer:
@@ -52,10 +40,7 @@ def show(
     with right:
 
         if st.button(
-            STEP_LABELS.get(
-                current_step,
-                "Continue →",
-            ),
+            STEP_LABELS[current_step],
             key=f"assessment_next_{current_step}",
             type="primary",
             use_container_width=True,
@@ -63,15 +48,11 @@ def show(
         ):
 
             if on_continue:
-
                 on_continue()
 
             if current_step < 4:
 
-                st.session_state.assessment[
-                    "step"
-                ] += 1
-
+                st.session_state.assessment["step"] += 1
                 st.rerun()
 
             else:
@@ -79,10 +60,5 @@ def show(
                 st.session_state[
                     "assessment_results"
                 ] = True
-
-                st.session_state.pop(
-                    "preview",
-                    None,
-                )
 
                 st.rerun()

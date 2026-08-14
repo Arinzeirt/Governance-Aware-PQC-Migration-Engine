@@ -16,13 +16,19 @@ def show():
 
     with st.container(border=True):
 
-        st.markdown("## Technology Landscape")
-
-        st.caption(
-            "Describe your organisation's technology environment to support enterprise quantum readiness analysis."
+        st.markdown(
+            "<h2 style='margin:0 0 4px 0;'>Technology Landscape</h2>",
+            unsafe_allow_html=True,
         )
 
-        left, right = st.columns(2)
+        st.markdown(
+            "<div style='font-size:0.78rem;color:#7f8da3;margin-bottom:10px;'>"
+            "Identify the technology environment and exposure relevant to your organisation's quantum-readiness posture."
+            "</div>",
+            unsafe_allow_html=True,
+        )
+
+        left, right = st.columns(2, gap="medium")
 
         with left:
 
@@ -35,7 +41,7 @@ def show():
                 ],
                 key="deployment_model",
                 index=None,
-                placeholder="Select Deployment Model",
+                placeholder="Select deployment model",
             )
 
             st.selectbox(
@@ -50,7 +56,7 @@ def show():
                 ],
                 key="cloud_provider",
                 index=None,
-                placeholder="Select Cloud Provider",
+                placeholder="Select cloud provider",
             )
 
             st.selectbox(
@@ -65,7 +71,20 @@ def show():
                 ],
                 key="identity_provider",
                 index=None,
-                placeholder="Select Identity Provider",
+                placeholder="Select identity provider",
+            )
+
+            st.selectbox(
+                "Technology Environment Profile *",
+                [
+                    "Modern",
+                    "Legacy",
+                    "Mixed Legacy and Modern",
+                    "Unknown",
+                ],
+                key="technology_environment_profile",
+                index=None,
+                placeholder="Select environment profile",
             )
 
         with right:
@@ -92,10 +111,17 @@ def show():
             )
 
             st.radio(
-                "Public APIs *",
+                "Public APIs / Internet-Facing Services *",
                 ["Yes", "No"],
                 horizontal=True,
                 key="public_api",
+            )
+
+            st.radio(
+                "Significant Third-Party Dependencies *",
+                ["Yes", "No", "Unknown"],
+                horizontal=True,
+                key="third_party_dependencies",
             )
 
     data = {
@@ -109,6 +135,11 @@ def show():
         "identity_provider":
             st.session_state.get("identity_provider"),
 
+        "technology_environment_profile":
+            st.session_state.get(
+                "technology_environment_profile"
+            ),
+
         "pki":
             st.session_state.get("pki"),
 
@@ -120,6 +151,11 @@ def show():
 
         "public_api":
             st.session_state.get("public_api"),
+
+        "third_party_dependencies":
+            st.session_state.get(
+                "third_party_dependencies"
+            ),
 
     }
 

@@ -15,19 +15,13 @@ def valid_email(email):
 
 
 # ==========================================================
-# Enterprise Overview
+# Enterprise Profile
 # ==========================================================
 
 def overview_complete(data):
 
     required = [
 
-        # Assessment contact
-        "respondent_name",
-        "respondent_role",
-        "respondent_email",
-
-        # Organisation
         "organisation_name",
         "organisation_email",
         "industry",
@@ -106,18 +100,20 @@ def cryptography_complete(data):
 
 # ==========================================================
 # Governance
-# ==========================================================
 
 def governance_complete(data):
 
     required = [
+
+        "respondent_name",
+        "respondent_role",
+        "respondent_email",
 
         "security_governance",
         "crypto_risk_owner",
         "risk_register",
         "crypto_policy",
         "crypto_change_process",
-        "compliance_program",
 
         "pqc_strategy",
         "pqc_owner",
@@ -133,4 +129,6 @@ def governance_complete(data):
         if data.get(field)
     )
 
-    return completed, len(required)
+    total = len(required)
+
+    return completed, total

@@ -4,12 +4,12 @@ from components.assessment.shell import (
     show as assessment_shell,
 )
 
-from components.assessment.overview.page import (
-    show as overview,
-)
-
 from components.assessment.governance.page import (
     show as governance,
+)
+
+from components.assessment.overview.page import (
+    show as overview,
 )
 
 from components.assessment.technology.page import (
@@ -20,12 +20,20 @@ from components.assessment.cryptography.page import (
     show as cryptography,
 )
 
+from components.assessment.review.page import (
+    show as review,
+)
+
 from components.assessment.results.page import (
     show as results,
 )
 
 
 def show():
+
+    # ---------------------------------------------------------
+    # Assessment state
+    # ---------------------------------------------------------
 
     if "assessment" not in st.session_state:
 
@@ -34,7 +42,7 @@ def show():
         }
 
     # ---------------------------------------------------------
-    # Executive results
+    # Results
     # ---------------------------------------------------------
 
     if st.session_state.get(
@@ -46,30 +54,47 @@ def show():
 
         return
 
+    # ---------------------------------------------------------
+    # Current step
+    # ---------------------------------------------------------
+
     step = st.session_state.assessment.get(
         "step",
         1,
     )
 
+    # ---------------------------------------------------------
+    # AUTHORITATIVE ASSESSMENT FLOW
+    #
+    # 1 Governance
+    # 2 Business & Data Exposure
+    # 3 Technology Landscape
+    # 4 Cryptographic Posture
+    # 5 Review
+    # ---------------------------------------------------------
+
     pages = {
 
-        1: overview,
+        1: governance,
 
-        2: governance,
+        2: overview,
 
         3: technology,
 
         4: cryptography,
 
+        5: review,
+
     }
+
+    renderer = pages.get(
+        step,
+        governance,
+    )
 
     assessment_shell(
         {
             "step": step,
-
-            "renderer": pages.get(
-                step,
-                overview,
-            ),
+            "renderer": renderer,
         }
     )

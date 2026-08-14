@@ -26,10 +26,6 @@ def show():
 
     with st.container(border=True):
 
-        # =====================================================
-        # ENTERPRISE OVERVIEW
-        # =====================================================
-
         st.markdown(
             """
             <div style="
@@ -38,112 +34,20 @@ def show():
                 line-height:1.1;
                 margin-bottom:4px;
             ">
-                Enterprise Overview
+            Organisation Information
             </div>
             """,
             unsafe_allow_html=True,
         )
 
         st.caption(
-            "Establish the organisational, business and operating "
-            "context required to assess quantum-readiness risk."
-        )
-
-        # =====================================================
-        # ASSESSMENT CONTACT
-        # =====================================================
-
-        st.markdown(
-            """
-            <div style="
-                font-size:0.90rem;
-                font-weight:700;
-                margin:12px 0 7px 0;
-            ">
-                Assessment Contact
-            </div>
-            """,
-            unsafe_allow_html=True,
-        )
-
-        contact_left, contact_right = st.columns(
-            2,
-            gap="medium",
-        )
-
-        with contact_left:
-
-            st.text_input(
-                "Full Name *",
-                key="respondent_name",
-                value=existing.get(
-                    "respondent_name",
-                    "",
-                ),
-                placeholder="Full name",
-            )
-
-        with contact_right:
-
-            roles = [
-                "Executive / C-Suite",
-                "CIO / CTO",
-                "CISO / Security Lead",
-                "IT / Infrastructure",
-                "Risk / Compliance",
-                "Architecture / Engineering",
-                "Audit",
-                "Other",
-            ]
-
-            existing_role = existing.get(
-                "respondent_role"
-            )
-
-            role_index = (
-                roles.index(existing_role)
-                if existing_role in roles
-                else None
-            )
-
-            st.selectbox(
-                "Role / Job Title *",
-                roles,
-                index=role_index,
-                key="respondent_role",
-                placeholder="Select role",
-            )
-
-        st.text_input(
-            "Business Email *",
-            key="respondent_email",
-            value=existing.get(
-                "respondent_email",
-                "",
-            ),
-            placeholder="name@company.com",
-        )
-
-        # =====================================================
-        # ORGANISATION
-        # =====================================================
-
-        st.markdown(
-            """
-            <div style="
-                font-size:0.90rem;
-                font-weight:700;
-                margin:14px 0 7px 0;
-            ">
-                Organisation
-            </div>
-            """,
-            unsafe_allow_html=True,
+            "Establish the organisational context required "
+            "to assess current quantum-readiness posture."
         )
 
         left, right = st.columns(
             2,
-            gap="medium",
+            gap="small",
         )
 
         # ==================================================
@@ -278,34 +182,12 @@ def show():
 
     # ======================================================
     # DATA
+    #
+    # Quantum Threat Horizon is intentionally NOT collected
+    # here. EQMP generates Z internally.
     # ======================================================
 
     data = {
-
-        # ----------------------------------------------
-        # Assessment contact
-        # ----------------------------------------------
-
-        "respondent_name":
-            st.session_state.get(
-                "respondent_name",
-                "",
-            ),
-
-        "respondent_role":
-            st.session_state.get(
-                "respondent_role"
-            ),
-
-        "respondent_email":
-            st.session_state.get(
-                "respondent_email",
-                "",
-            ),
-
-        # ----------------------------------------------
-        # Organisation
-        # ----------------------------------------------
 
         "organisation_name":
             st.session_state.get(
@@ -364,7 +246,7 @@ def show():
     )
 
     # ======================================================
-    # ASSESSMENT ID
+    # Assessment ID
     # ======================================================
 
     if (
@@ -381,37 +263,24 @@ def show():
         )
 
     # ======================================================
-    # VALIDATION
+    # Validation
     # ======================================================
 
     completed, total = overview_complete(
         data
     )
 
-    respondent_email_ok = valid_email(
-        data["respondent_email"]
-    )
-
-    organisation_email_ok = valid_email(
+    email_ok = valid_email(
         data["organisation_email"]
     )
 
     if (
-        data["respondent_email"]
-        and not respondent_email_ok
-    ):
-
-        st.error(
-            "Please enter a valid assessment contact email address."
-        )
-
-    if (
         data["organisation_email"]
-        and not organisation_email_ok
+        and not email_ok
     ):
 
         st.error(
-            "Please enter a valid organisation business email address."
+            "Please enter a valid business email address."
         )
 
     return {
@@ -425,8 +294,7 @@ def show():
         "can_continue":
             (
                 completed == total
-                and respondent_email_ok
-                and organisation_email_ok
+                and email_ok
             ),
 
         "on_continue":

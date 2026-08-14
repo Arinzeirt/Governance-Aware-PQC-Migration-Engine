@@ -1,54 +1,53 @@
 import streamlit as st
 
+from content.assessment import STEPS
+
 from components.assessment.summary_panel import show as summary_panel
-from components.assessment.research_brief import show as research_brief
 
 
 def show(
     *,
     current_step,
     form,
-    research,
 ):
-    """
-    Standard assessment page layout.
 
-    Every assessment page should use this layout.
+    #
+    # Resolve display information from the
+    # internal numeric step.
+    #
 
-    Layout
-
-    ┌─────────────────────────────┬────────────────────┐
-    │ Form                        │ Assessment Summary │
-    │                             │                    │
-    │ Research Brief              │                    │
-    └─────────────────────────────┴────────────────────┘
-    """
+    step = next(
+        (
+            item
+            for item in STEPS
+            if item["id"] == current_step
+        ),
+        STEPS[0],
+    )
 
     main, sidebar = st.columns(
-        [7, 3],
+        [7.5, 2.5],
         gap="large",
     )
 
-    #
-    # Main Content
-    #
     with main:
 
         result = form()
 
-        research_brief(
-            research,
-        )
-
-    #
-    # Sidebar
-    #
     with sidebar:
 
         summary_panel(
             current_step=current_step,
+            current_step_label=step["title"],
             completed=result["completed"],
             total=result["total"],
+            can_continue=result.get(
+                "can_continue",
+                False,
+            ),
+            on_continue=result.get(
+                "on_continue",
+            ),
         )
 
     return result

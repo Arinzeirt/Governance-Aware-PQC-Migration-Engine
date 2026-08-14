@@ -1,0 +1,1031 @@
+import streamlit as st
+
+from components.assessment.results.calculator import (
+    calculate,
+)
+
+
+def show():
+
+    assessment = st.session_state.get(
+        "assessment",
+        {},
+    )
+
+    result = calculate(assessment)
+
+    assessment_id = st.session_state.get(
+        "assessment_id",
+        "Pending",
+    )
+
+    overall_score = result["overall_score"]
+    overall_label = result["overall_label"]
+
+    governance_score = result["governance"]
+    crypto_score = result["cryptography"]
+    technology_score = result["technology"]
+    migration_score = result["migration"]
+
+    threat_level = result["threat_level"]
+    findings = result["findings"]
+    actions = result["actions"]
+
+    st.markdown(
+        """
+<style>
+
+.eqmp-result {
+    max-width: 1180px;
+    margin: 0 auto;
+}
+
+/* =========================================================
+   Header
+   ========================================================= */
+
+.eqmp-result-title {
+    font-size: 22px;
+    font-weight: 700;
+    line-height: 1.1;
+    margin-top: 3px;
+}
+
+.eqmp-result-brand button {
+    font-size: 1.05rem !important;
+    font-weight: 800 !important;
+    letter-spacing: -0.02em !important;
+    padding: 0 !important;
+    min-height: 30px !important;
+    border: none !important;
+    background: transparent !important;
+}
+
+.eqmp-result-brand button:hover {
+    border: none !important;
+    background: transparent !important;
+}
+
+.eqmp-id-label {
+    font-size: 10px;
+    letter-spacing: 1px;
+    opacity: .50;
+    margin-bottom: 5px;
+}
+
+.eqmp-id {
+    font-family: monospace;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+
+/* =========================================================
+   Primary executive cards
+   ========================================================= */
+
+.eqmp-hero {
+    border: 1px solid rgba(255,255,255,.13);
+    border-radius: 8px;
+    padding: 14px 17px;
+    min-height: 78px;
+}
+
+.eqmp-hero-label {
+    font-size: 10px;
+    letter-spacing: 1px;
+    opacity: .52;
+    margin-bottom: 5px;
+}
+
+.eqmp-score {
+    font-size: 38px;
+    font-weight: 750;
+    line-height: 1;
+}
+
+.eqmp-threat {
+    font-size: 23px;
+    font-weight: 700;
+    line-height: 1;
+    margin-top: 7px;
+}
+
+.eqmp-status {
+    font-size: 18px;
+    font-weight: 650;
+    margin-top: 7px;
+}
+
+.eqmp-score-label {
+    font-size: 11px;
+    font-weight: 600;
+    margin-top: 5px;
+    opacity: .80;
+}
+
+
+/* =========================================================
+   Executive overview
+   ========================================================= */
+
+.eqmp-overview {
+    border: 1px solid rgba(255,255,255,.12);
+    border-radius: 8px;
+    padding: 11px 17px;
+    margin-top: 10px;
+}
+
+.eqmp-overview-title {
+    font-size: 12px;
+    font-weight: 700;
+    margin-bottom: 5px;
+}
+
+.eqmp-overview-text {
+    font-size: 12px;
+    line-height: 1.45;
+    opacity: .78;
+}
+
+
+/* =========================================================
+   Assessment dimensions
+   ========================================================= */
+
+.eqmp-dimension {
+    border: 1px solid rgba(255,255,255,.12);
+    border-radius: 8px;
+    padding: 10px 13px;
+    min-height: 72px;
+}
+
+.eqmp-dimension-title {
+    font-size: 10px;
+    letter-spacing: .7px;
+    opacity: .55;
+    margin-bottom: 5px;
+}
+
+.eqmp-dimension-score {
+    font-size: 21px;
+    font-weight: 700;
+    line-height: 1;
+}
+
+.eqmp-progress {
+    height: 5px;
+    background: rgba(255,255,255,.10);
+    border-radius: 5px;
+    margin-top: 8px;
+    overflow: hidden;
+}
+
+.eqmp-progress-fill {
+    height: 100%;
+    background: #2196f3;
+    border-radius: 5px;
+}
+
+
+/* =========================================================
+   Findings / Actions
+   ========================================================= */
+
+.eqmp-section {
+    border: 1px solid rgba(255,255,255,.12);
+    border-radius: 8px;
+    padding: 10px 16px;
+    margin-top: 10px;
+}
+
+.eqmp-section-title {
+    font-size: 12px;
+    font-weight: 700;
+    margin-bottom: 5px;
+}
+
+.eqmp-finding {
+    font-size:0.76rem;
+    line-height: 1.35;
+    margin: 2px 0;
+    opacity: .78;
+}
+
+.eqmp-action {
+    font-size: 10.5px;
+    line-height: 1.35;
+    margin: 2px 0;
+    opacity: .78;
+}
+
+.eqmp-action-sub {
+    font-size: 10.5px;
+    opacity: .55;
+    margin-bottom: 6px;
+}
+
+.eqmp-signin {
+    text-align: center;
+    font-size: 10.5px;
+    opacity: .55;
+    margin-top: 5px;
+}
+
+div.stButton > button {
+    min-height: 37px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+</style>
+""",
+        unsafe_allow_html=True,
+    )
+
+
+    # =========================================================
+    # Header
+    # =========================================================
+
+    brand, title, identifier = st.columns(
+        [1.5, 5, 2.5],
+        gap="small",
+    )
+
+    with brand:
+
+        st.markdown(
+            '<div class="eqmp-result-brand">',
+            unsafe_allow_html=True,
+        )
+
+        if st.button(
+            "EQMP",
+            key="result_nav_home",
+            use_container_width=False,
+        ):
+
+            st.session_state.page = "landing"
+            st.rerun()
+
+        st.markdown(
+            "</div>",
+            unsafe_allow_html=True,
+        )
+
+    with title:
+
+        st.markdown(
+            """
+<div class="eqmp-result-title">
+Quantum Readiness Assessment
+</div>
+""",
+            unsafe_allow_html=True,
+        )
+
+    with identifier:
+
+        st.markdown(
+            f"""
+<div class="eqmp-id-label">
+ASSESSMENT ID
+</div>
+
+<div class="eqmp-id">
+{assessment_id}
+</div>
+""",
+            unsafe_allow_html=True,
+        )
+
+
+    # =========================================================
+    # Executive outcome cards
+    # =========================================================
+
+    left, middle, right = st.columns(
+        [1.2, 1, 1],
+        gap="medium",
+    )
+
+    with left:
+
+        st.markdown(
+            f"""
+<div class="eqmp-hero">
+
+<div class="eqmp-hero-label">
+OVERALL READINESS
+</div>
+
+<div class="eqmp-score">
+{overall_score}%
+</div>
+
+<div class="eqmp-score-label">
+{overall_label}
+</div>
+
+</div>
+""",
+            unsafe_allow_html=True,
+        )
+
+    with middle:
+
+        if threat_level == "High":
+
+            exposure_label = "Action Recommended"
+
+        elif threat_level == "Elevated":
+
+            exposure_label = "Attention Required"
+
+        else:
+
+            exposure_label = "Monitor"
+
+        st.markdown(
+            f"""
+<div class="eqmp-hero">
+
+<div class="eqmp-hero-label">
+QUANTUM EXPOSURE
+</div>
+
+<div class="eqmp-threat">
+{threat_level}
+</div>
+
+<div class="eqmp-score-label">
+{exposure_label}
+</div>
+
+</div>
+""",
+            unsafe_allow_html=True,
+        )
+
+    with right:
+
+        st.markdown(
+            """
+<div class="eqmp-hero">
+
+<div class="eqmp-hero-label">
+ASSESSMENT STATUS
+</div>
+
+<div class="eqmp-status">
+Complete
+</div>
+
+<div class="eqmp-score-label">
+Executive assessment generated
+</div>
+
+</div>
+""",
+            unsafe_allow_html=True,
+        )
+
+
+    # =========================================================
+    # Executive Overview
+    # =========================================================
+
+    if threat_level == "High":
+
+        overview_text = (
+            f"Your organisation currently demonstrates "
+            f"{overall_label.lower()}. The assessment indicates "
+            f"material post-quantum exposure and migration gaps "
+            f"that should be addressed proactively."
+        )
+
+    elif threat_level == "Elevated":
+
+        overview_text = (
+            f"Your organisation demonstrates "
+            f"{overall_label.lower()}, with areas requiring "
+            f"attention before a broader post-quantum migration."
+        )
+
+    else:
+
+        overview_text = (
+            f"Your organisation demonstrates "
+            f"{overall_label.lower()}. Current controls provide "
+            f"a reasonable foundation, but continued discovery "
+            f"and migration planning remain important."
+        )
+
+    st.markdown(
+        f"""
+<div class="eqmp-overview">
+
+<div class="eqmp-overview-title">
+Executive Overview
+</div>
+
+<div class="eqmp-overview-text">
+{overview_text}
+</div>
+
+</div>
+""",
+        unsafe_allow_html=True,
+    )
+
+
+    # =========================================================
+    # Four assessment dimensions
+    # =========================================================
+
+    st.markdown(
+        '<div style="height:8px"></div>',
+        unsafe_allow_html=True,
+    )
+
+    g, c, t, m = st.columns(
+        4,
+        gap="small",
+    )
+
+    dimensions = [
+
+        (
+            g,
+            "GOVERNANCE & RISK",
+            governance_score,
+        ),
+
+        (
+            c,
+            "CRYPTOGRAPHIC POSTURE",
+            crypto_score,
+        ),
+
+        (
+            t,
+            "TECHNOLOGY LANDSCAPE",
+            technology_score,
+        ),
+
+        (
+            m,
+            "MIGRATION READINESS",
+            migration_score,
+        ),
+
+    ]
+
+    for column, label, score in dimensions:
+
+        with column:
+
+            st.markdown(
+                f"""
+<div class="eqmp-dimension">
+
+<div class="eqmp-dimension-title">
+{label}
+</div>
+
+<div class="eqmp-dimension-score">
+{score}%
+</div>
+
+<div class="eqmp-progress">
+<div class="eqmp-progress-fill"
+style="width:{score}%;">
+</div>
+</div>
+
+</div>
+""",
+                unsafe_allow_html=True,
+            )
+
+
+    # =========================================================
+    # FREE RISK EXPOSURE REPORT
+    #
+    # This is intentionally a high-level exposure assessment.
+    # It does not claim cryptographic discovery or infrastructure
+    # scanning has been performed.
+    # =========================================================
+
+    overview = assessment.get(
+        "overview",
+        {},
+    )
+
+    governance = assessment.get(
+        "governance",
+        {},
+    )
+
+    technology = assessment.get(
+        "technology",
+        {},
+    )
+
+    crypto = assessment.get(
+        "cryptography",
+        {},
+    )
+
+    organisation_name = overview.get(
+        "organisation_name"
+    ) or "Your organisation"
+
+    industry = overview.get(
+        "industry"
+    )
+
+    critical_infrastructure = overview.get(
+        "critical_infrastructure"
+    )
+
+    critical_services = overview.get(
+        "critical_business_services",
+        [],
+    )
+
+    long_term_data = crypto.get(
+        "long_term_data"
+    )
+
+    crypto_inventory = crypto.get(
+        "crypto_inventory"
+    )
+
+    pqc_strategy = governance.get(
+        "pqc_strategy"
+    )
+
+    pqc_owner = governance.get(
+        "pqc_owner"
+    )
+
+    executive_support = governance.get(
+        "executive_support"
+    )
+
+    security_governance = governance.get(
+        "security_governance"
+    )
+
+    confidence = governance.get(
+        "governance_confidence"
+    )
+
+    # =========================================================
+    # Determine risk posture
+    # =========================================================
+
+    if threat_level == "High":
+
+        risk_title = "SIGNIFICANT QUANTUM RISK EXPOSURE"
+
+        risk_summary = (
+            "The assessment indicates material exposure to "
+            "future cryptographic disruption and warrants "
+            "deeper evidence-based investigation."
+        )
+
+    elif threat_level == "Elevated":
+
+        risk_title = "ELEVATED QUANTUM RISK EXPOSURE"
+
+        risk_summary = (
+            "The assessment identifies conditions that could "
+            "increase the organisation's exposure to future "
+            "cryptographic disruption."
+        )
+
+    else:
+
+        risk_title = "DEVELOPING QUANTUM RISK"
+
+        risk_summary = (
+            "The assessment has identified areas that require "
+            "greater visibility before the organisation's "
+            "quantum exposure can be confidently determined."
+        )
+
+    # =========================================================
+    # Risk signals
+    # =========================================================
+
+    risk_signals = []
+
+    if (
+        security_governance
+        and security_governance != "Established"
+    ):
+
+        risk_signals.append(
+            (
+                "Governance",
+                "Technology and security risk governance "
+                "is not yet fully established."
+            )
+        )
+
+    if (
+        pqc_strategy
+        and pqc_strategy != "Established"
+    ):
+
+        risk_signals.append(
+            (
+                "Migration Governance",
+                "A formal post-quantum migration strategy "
+                "has not yet been established."
+            )
+        )
+
+    if (
+        pqc_owner
+        and pqc_owner != "Assigned"
+    ):
+
+        risk_signals.append(
+            (
+                "Ownership",
+                "Clear ownership for post-quantum migration "
+                "has not yet been established."
+            )
+        )
+
+    if long_term_data == "Yes":
+
+        risk_signals.append(
+            (
+                "Data Longevity",
+                "Long-lived sensitive information may increase "
+                "harvest-now-decrypt-later exposure."
+            )
+        )
+
+    if crypto_inventory != "Yes":
+
+        risk_signals.append(
+            (
+                "Cryptographic Visibility",
+                "A complete cryptographic inventory is not yet "
+                "available, so actual cryptographic exposure "
+                "remains unverified."
+            )
+        )
+
+    if (
+        executive_support
+        and executive_support != "Confirmed"
+    ):
+
+        risk_signals.append(
+            (
+                "Executive Readiness",
+                "Executive sponsorship for quantum transition "
+                "has not yet been firmly established."
+            )
+        )
+
+    if (
+        critical_infrastructure == "Yes"
+        and len(risk_signals) < 4
+    ):
+
+        risk_signals.append(
+            (
+                "Business Criticality",
+                "The organisation operates critical infrastructure, "
+                "increasing the potential impact of cryptographic "
+                "disruption."
+            )
+        )
+
+    # Guarantee a useful number of signals without inventing
+    # technical findings.
+
+    if not risk_signals:
+
+        risk_signals.append(
+            (
+                "Visibility",
+                "The assessment provides organisational signals "
+                "but does not establish the underlying cryptographic "
+                "asset and dependency inventory."
+            )
+        )
+
+    risk_signals = risk_signals[:4]
+
+    # =========================================================
+    # Risk header
+    # =========================================================
+
+    st.markdown(
+        f"""
+<div class="eqmp-section">
+
+<div style="
+    font-size:0.68rem;
+    letter-spacing:1.5px;
+    color:#7F91A6;
+    font-weight:700;
+    margin-bottom:6px;
+">
+PRELIMINARY QUANTUM RISK ASSESSMENT
+</div>
+
+<div style="
+    font-size:1.55rem;
+    font-weight:800;
+    line-height:1.1;
+    margin-bottom:7px;
+">
+{risk_title}
+</div>
+
+<div style="
+    font-size:0.88rem;
+    line-height:1.45;
+    color:#AEBCCE;
+    max-width:900px;
+">
+{risk_summary}
+</div>
+
+</div>
+""",
+        unsafe_allow_html=True,
+    )
+
+    # =========================================================
+    # Risk signal cards
+    # =========================================================
+
+    st.markdown(
+        """
+<div style="
+    font-size:0.92rem;
+    font-weight:750;
+    margin:14px 0 8px 0;
+">
+Key Risk Signals
+</div>
+""",
+        unsafe_allow_html=True,
+    )
+
+    signal_left, signal_right = st.columns(
+        2,
+        gap="medium",
+    )
+
+    for index, (label, message) in enumerate(
+        risk_signals
+    ):
+
+        column = (
+            signal_left
+            if index % 2 == 0
+            else signal_right
+        )
+
+        with column:
+
+            st.markdown(
+                f"""
+<div style="
+    border:1px solid rgba(255,255,255,.10);
+    border-radius:8px;
+    padding:11px 13px;
+    margin-bottom:9px;
+    min-height:76px;
+">
+
+<div style="
+    font-size:0.68rem;
+    letter-spacing:.8px;
+    text-transform:uppercase;
+    color:#7F91A6;
+    font-weight:700;
+    margin-bottom:5px;
+">
+{label}
+</div>
+
+<div style="
+    font-size:0.82rem;
+    line-height:1.4;
+    color:#D5DCE5;
+">
+{message}
+</div>
+
+</div>
+""",
+                unsafe_allow_html=True,
+            )
+
+    # =========================================================
+    # Migration pressure
+    # =========================================================
+
+    migration_level = (
+        "HIGH"
+        if migration_score < 40
+        else
+        "ELEVATED"
+        if migration_score < 60
+        else
+        "DEVELOPING"
+    )
+
+    st.markdown(
+        f"""
+<div style="
+    border:1px solid rgba(255,255,255,.10);
+    border-radius:8px;
+    padding:12px 14px;
+    margin-top:4px;
+    margin-bottom:10px;
+">
+
+<div style="
+    font-size:0.68rem;
+    letter-spacing:1px;
+    color:#7F91A6;
+    font-weight:700;
+    margin-bottom:4px;
+">
+MIGRATION PLANNING PRESSURE
+</div>
+
+<div style="
+    font-size:1.05rem;
+    font-weight:800;
+    margin-bottom:4px;
+">
+{migration_level}
+</div>
+
+<div style="
+    font-size:0.80rem;
+    line-height:1.4;
+    color:#AEBCCE;
+">
+The current assessment suggests that quantum migration
+should be treated as a planned enterprise transformation,
+not a future point-in-time technology replacement.
+</div>
+
+</div>
+""",
+        unsafe_allow_html=True,
+    )
+
+    # =========================================================
+    # What is still unknown
+    # =========================================================
+
+    st.markdown(
+        f"""
+<div style="
+    border-left:3px solid #2F81F7;
+    padding:8px 12px;
+    margin:4px 0 12px 0;
+">
+
+<div style="
+    font-size:0.80rem;
+    font-weight:750;
+    margin-bottom:3px;
+">
+What this assessment does not yet establish
+</div>
+
+<div style="
+    font-size:0.78rem;
+    line-height:1.4;
+    color:#AEBCCE;
+">
+No cryptographic discovery, source-code analysis,
+certificate inspection or infrastructure scanning has
+been performed. Your actual cryptographic exposure and
+migration dependencies therefore remain to be established.
+</div>
+
+</div>
+""",
+        unsafe_allow_html=True,
+    )
+
+    # =========================================================
+    # Audit pitch
+    # =========================================================
+
+    st.markdown(
+        f"""
+<div style="
+    border:1px solid rgba(255,255,255,.12);
+    border-radius:8px;
+    padding:13px 15px;
+    margin-top:4px;
+    margin-bottom:12px;
+">
+
+<div style="
+    font-size:0.95rem;
+    font-weight:800;
+    margin-bottom:5px;
+">
+The next question is not whether you need to migrate.
+</div>
+
+<div style="
+    font-size:0.82rem;
+    line-height:1.45;
+    color:#AEBCCE;
+">
+It is what you actually need to migrate, where the
+dependencies exist, and which systems should be prioritised.
+A Full Quantum Audit establishes the evidence required to
+answer those questions.
+</div>
+
+</div>
+""",
+        unsafe_allow_html=True,
+    )
+
+
+    # =========================================================
+    # Primary / Supporting Actions
+    # =========================================================
+
+    action_left, action_right = st.columns(
+        2,
+        gap="medium",
+    )
+
+
+    # ---------------------------------------------------------
+    # SUPPORTING ACTION
+    # ---------------------------------------------------------
+
+    with action_left:
+
+        if st.button(
+            "Download Report",
+            use_container_width=True,
+            key="result_download_report",
+        ):
+
+            st.session_state[
+                "eqmp_download_requested"
+            ] = True
+
+
+    # ---------------------------------------------------------
+    # PRIMARY ACTION
+    # ---------------------------------------------------------
+
+    with action_right:
+
+        st.link_button(
+            "Book Full Quantum Audit →",
+            "https://calendly.com/enetinnovative-support/30min",
+            type="primary",
+            use_container_width=True,
+        )
+
+
+    # =========================================================
+    # Sign in
+    # =========================================================
+
+    st.markdown(
+        '<div class="eqmp-signin">'
+        'Already have an EQMP account?'
+        '</div>',
+        unsafe_allow_html=True,
+    )
+
+
+    if st.button(
+        "Sign in →",
+        use_container_width=True,
+        key="result_sign_in",
+    ):
+
+        st.session_state[
+            "eqmp_login_requested"
+        ] = True

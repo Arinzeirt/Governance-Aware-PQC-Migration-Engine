@@ -3,33 +3,31 @@ import streamlit as st
 
 def show():
 
-    st.markdown(
-        "<div style='height:18px'></div>",
-        unsafe_allow_html=True,
-    )
+    if st.button(
+        "Start Enterprise Assessment →",
+        type="primary",
+        use_container_width=True,
+    ):
 
-    left, centre, right = st.columns([2, 3, 2])
+        # =====================================================
+        # Start a completely fresh assessment
+        # =====================================================
 
-    with centre:
+        st.session_state["assessment"] = {
+            "step": 1,
+        }
 
-        if st.button(
-            "Start Enterprise Assessment →",
-            type="primary",
-            use_container_width=True,
-            key="hero_cta",
-        ):
+        # The previous assessment may have reached
+        # the executive results layer. Clear that route state.
+        st.session_state["assessment_results"] = False
 
-            #
-            # Launch Enterprise Assessment
-            #
-            st.session_state.page = "enterprise_assessment"
+        # Clear any temporary preview/result routing state.
+        st.session_state.pop(
+            "preview",
+            None,
+        )
 
-            st.rerun()
+        # Route into the assessment.
+        st.session_state.page = "enterprise_assessment"
 
-    st.markdown(
-        "<div style='height:24px'></div>",
-        unsafe_allow_html=True,
-    )
-
-    st.divider()
-
+        st.rerun()

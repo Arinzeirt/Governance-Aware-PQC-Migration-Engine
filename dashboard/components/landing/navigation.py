@@ -3,95 +3,94 @@ import streamlit as st
 
 def show():
 
-    #
-    # Clicking the logo returns to the landing page.
-    #
-    if "home" in st.query_params:
+    st.markdown(
+        """
+        <style>
 
-        st.session_state.page = "landing"
+        .eqmp-nav {
+            display:flex;
+            align-items:center;
+            justify-content:space-between;
+            padding:10px 0 14px 0;
+        }
 
-        st.query_params.clear()
+        .eqmp-brand {
+            font-size:1.05rem;
+            font-weight:800;
+            letter-spacing:-0.02em;
+        }
 
-        st.rerun()
+        .eqmp-nav-links {
+            display:flex;
+            align-items:center;
+            gap:8px;
+        }
 
-    left, right = st.columns([2, 5])
+        </style>
+        """,
+        unsafe_allow_html=True,
+    )
+
+    left, login, frameworks, research, assessment = st.columns(
+        [5, 1, 1, 1, 1.55],
+        gap="small",
+    )
 
     with left:
 
-        st.markdown(
-            """
-<a href="?home=true" target="_self" style="text-decoration:none;">
+        if st.button(
+            "EQMP",
+            key="nav_home",
+            use_container_width=False,
+        ):
 
-<h3 style="
-margin:0;
-color:#2F80ED;
-font-weight:700;
-">
-ENET
-</h3>
+            st.session_state.page = "landing"
+            st.rerun()
 
-<div style="
-color:#AEB7C5;
-font-size:12px;
-letter-spacing:1px;
-margin-top:-2px;
-">
-TECHNOLOGIES
-</div>
+    with login:
 
-</a>
-""",
-            unsafe_allow_html=True,
-        )
+        if st.button(
+            "Login",
+            key="nav_login",
+            use_container_width=True,
+        ):
 
-    with right:
+            st.session_state[
+                "eqmp_login_requested"
+            ] = True
 
-        c1, c2, c3, c4 = st.columns([1, 1, 1, 2])
+            st.rerun()
 
-        with c1:
+    with frameworks:
 
-            if st.button(
-                "Research",
-                use_container_width=True,
-                key="nav_research",
-            ):
+        if st.button(
+            "Frameworks",
+            key="nav_frameworks",
+            use_container_width=True,
+        ):
 
-                st.session_state.page = "research"
-                st.rerun()
+            st.session_state.page = "frameworks"
+            st.rerun()
 
-        with c2:
+    with research:
 
-            if st.button(
-                "Frameworks",
-                use_container_width=True,
-                key="nav_frameworks",
-            ):
+        if st.button(
+            "Research",
+            key="nav_research",
+            use_container_width=True,
+        ):
 
-                st.session_state.page = "frameworks"
-                st.rerun()
+            st.session_state.page = "research"
+            st.rerun()
 
-        with c3:
+    with assessment:
 
-            if st.button(
-                "About",
-                use_container_width=True,
-                key="nav_about",
-            ):
+        if st.button(
+            "Enterprise Assessment",
+            key="nav_assessment",
+            type="primary",
+            use_container_width=True,
+        ):
 
-                st.session_state.page = "about"
-                st.rerun()
-
-        with c4:
-
-            if st.button(
-                "Start Enterprise Assessment",
-                type="primary",
-                use_container_width=True,
-                key="nav_start_assessment",
-            ):
-
-                st.session_state.page = "enterprise_assessment"
-                st.rerun()
-
-    st.divider()
-
+            st.session_state.page = "enterprise_assessment"
+            st.rerun()

@@ -10,7 +10,7 @@ from components.assessment.store import (
 STEP_LABELS = {
 
     1:
-        "Continue to Governance →",
+        "Continue to Business & Data Exposure →",
 
     2:
         "Continue to Technology Landscape →",
@@ -19,7 +19,10 @@ STEP_LABELS = {
         "Continue to Cryptographic Posture →",
 
     4:
-        "Generate Executive Assessment →",
+        "Continue to Assessment Review →",
+
+    5:
+        "View Assessment Results →",
 
 }
 
@@ -106,10 +109,7 @@ def show(
 
             st.markdown(
                 f"""
-                <div style="
-                    font-size:1rem;
-                    font-weight:750;
-                ">
+                <div style="font-size:1rem;font-weight:750;">
                     {completed}/{total}
                 </div>
 
@@ -174,10 +174,6 @@ def show(
             unsafe_allow_html=True,
         )
 
-        # -----------------------------------------------------
-        # Back
-        # -----------------------------------------------------
-
         if current_step > 1:
 
             if st.button(
@@ -186,15 +182,8 @@ def show(
                 use_container_width=True,
             ):
 
-                st.session_state.assessment[
-                    "step"
-                ] -= 1
-
+                st.session_state.assessment["step"] -= 1
                 st.rerun()
-
-        # -----------------------------------------------------
-        # Continue
-        # -----------------------------------------------------
 
         if st.button(
             STEP_LABELS.get(
@@ -211,7 +200,7 @@ def show(
 
                 on_continue()
 
-            if current_step < 4:
+            if current_step < 5:
 
                 st.session_state.assessment[
                     "step"
@@ -238,10 +227,10 @@ def show(
                 "Complete all required fields to continue."
             )
 
-        elif current_step == 4:
+        elif current_step == 5:
 
             st.caption(
-                "Generate your executive quantum-readiness assessment."
+                "Assessment complete. View your EQMP results."
             )
 
         else:
