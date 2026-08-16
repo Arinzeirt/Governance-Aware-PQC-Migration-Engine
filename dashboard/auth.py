@@ -12,14 +12,14 @@ USERS = {
         "name": "EQMP Test Account",
     },
 
-    "user": {
-        "password": "12345",
+    "user@eqmp.local": {
+        "password": "eqmp123",
         "role": "user",
         "name": "EQMP User",
     },
 
-    "admin": {
-        "password": "12345",
+    "admin@eqmp.local": {
+        "password": "eqmp123",
         "role": "admin",
         "name": "EQMP Administrator",
     },

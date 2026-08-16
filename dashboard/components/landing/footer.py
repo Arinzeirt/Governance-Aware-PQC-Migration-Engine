@@ -35,8 +35,6 @@ def show():
 
     st.markdown("<div style='height:24px'></div>", unsafe_allow_html=True)
 
-    st.divider()
-
     c1,c2,c3,c4,c5 = st.columns([1.6,1,1,1,1])
 
     with c1:
@@ -124,7 +122,10 @@ unsafe_allow_html=True)
 
     st.markdown("<div style='height:18px'></div>", unsafe_allow_html=True)
 
-    st.divider()
+    st.markdown(
+        '<div style="height:1px;background:#14233C;margin-top:2px;"></div>',
+        unsafe_allow_html=True,
+    )
 
     left,right = st.columns([4,2])
 
