@@ -28,6 +28,8 @@ USERS = {
 
 def authenticate(identifier, password):
 
+    identifier = identifier.strip().lower()
+
     account = USERS.get(
         identifier,
     )
