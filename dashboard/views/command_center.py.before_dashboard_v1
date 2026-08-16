@@ -1,0 +1,61 @@
+import streamlit as st
+
+
+def show():
+
+    if not st.session_state.get(
+        "eqmp_authenticated",
+        False,
+    ):
+
+        st.session_state.page = "login"
+        st.rerun()
+
+    st.markdown(
+        """
+        <div style="
+            margin-bottom:24px;
+        ">
+
+            <div style="
+                font-size:1.8rem;
+                font-weight:800;
+            ">
+                Command Center
+            </div>
+
+            <div style="
+                color:#8FA1B5;
+                font-size:0.9rem;
+                margin-top:4px;
+            ">
+                Enterprise quantum migration governance
+                and accountability.
+            </div>
+
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
+
+    st.info(
+        "Authenticated EQMP environment — Command Center foundation."
+    )
+
+    if st.button(
+        "Sign Out",
+        key="eqmp_logout",
+    ):
+
+        st.session_state[
+            "eqmp_authenticated"
+        ] = False
+
+        st.session_state.pop(
+            "eqmp_user_email",
+            None,
+        )
+
+        st.session_state.page = "landing"
+
+        st.rerun()

@@ -55,10 +55,7 @@ def show():
             use_container_width=True,
         ):
 
-            st.session_state[
-                "eqmp_login_requested"
-            ] = True
-
+            st.session_state.page = "login"
             st.rerun()
 
     with frameworks:

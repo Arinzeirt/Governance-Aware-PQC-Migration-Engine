@@ -1,0 +1,609 @@
+import streamlit as st
+
+
+def show():
+
+    # =========================================================
+    # Authentication / Role
+    # =========================================================
+
+    if not st.session_state.get(
+        "eqmp_authenticated",
+        False,
+    ):
+
+        st.session_state.page = "login"
+        st.rerun()
+
+    user_role = st.session_state.get(
+        "eqmp_user_role",
+        "user",
+    )
+
+    is_admin = user_role == "admin"
+
+    # =========================================================
+    # Header
+    # =========================================================
+
+    header_left, header_right = st.columns(
+        [8.5, 1.5],
+        gap="small",
+    )
+
+    with header_left:
+
+        settings_description = (
+            "Master system configuration and administrative controls."
+            if is_admin
+            else
+            "Manage your profile, password and personal preferences."
+        )
+
+        st.markdown(
+            f"""
+<div style="
+    margin-bottom:24px;
+">
+
+<div style="
+    font-size:1.75rem;
+    font-weight:800;
+    line-height:1.1;
+    color:#F5F7FA;
+">
+Settings
+</div>
+
+<div style="
+    color:#8FA1B5;
+    font-size:0.88rem;
+    margin-top:5px;
+">
+{settings_description}
+</div>
+
+</div>
+""",
+            unsafe_allow_html=True,
+        )
+
+    with header_right:
+
+        st.markdown(
+            """
+<div style="
+    display:flex;
+    justify-content:flex-end;
+    align-items:center;
+    gap:7px;
+    margin-top:8px;
+">
+
+<div class="eqmp-live-dot"></div>
+
+<span style="
+    font-size:0.68rem;
+    color:#8FA1B5;
+    letter-spacing:.5px;
+">
+SYSTEM LIVE
+</span>
+
+</div>
+
+<style>
+
+.eqmp-live-dot {
+    width:7px;
+    height:7px;
+    border-radius:50%;
+    background:#22C55E;
+    box-shadow:0 0 0 rgba(34,197,94,.55);
+    animation:eqmp-settings-pulse 1.8s infinite;
+}
+
+@keyframes eqmp-settings-pulse {
+
+    0% {
+        box-shadow:0 0 0 0 rgba(34,197,94,.55);
+    }
+
+    70% {
+        box-shadow:0 0 0 6px rgba(34,197,94,0);
+    }
+
+    100% {
+        box-shadow:0 0 0 0 rgba(34,197,94,0);
+    }
+
+}
+
+</style>
+""",
+            unsafe_allow_html=True,
+        )
+
+    # =========================================================
+    # Back
+    # =========================================================
+
+    if st.button(
+        "← Command Center",
+        key="settings_back",
+    ):
+
+        st.session_state.page = "command_center"
+        st.rerun()
+
+    st.markdown(
+        '<div style="height:8px"></div>',
+        unsafe_allow_html=True,
+    )
+
+    # =========================================================
+    # System Configuration
+    # =========================================================
+
+    st.markdown(
+        """
+<div class="eqmp-settings-section">
+
+<div class="eqmp-settings-title">
+System Configuration
+</div>
+
+<div class="eqmp-settings-description">
+Core configuration for the EQMP master environment.
+</div>
+
+</div>
+""",
+        unsafe_allow_html=True,
+    )
+
+    left, right = st.columns(
+        2,
+        gap="medium",
+    )
+
+    with left:
+
+        st.selectbox(
+            "Environment",
+            [
+                "Development",
+                "Staging",
+                "Production",
+            ],
+            index=0,
+            key="eqmp_environment",
+        )
+
+        st.text_input(
+            "Platform Name",
+            value="Enterprise Quantum Migration Platform",
+            key="eqmp_platform_name",
+        )
+
+    with right:
+
+        st.selectbox(
+            "Assessment Mode",
+            [
+                "Enterprise",
+                "Demonstration",
+            ],
+            index=0,
+            key="eqmp_assessment_mode",
+        )
+
+        st.selectbox(
+            "Default Access Model",
+            [
+                "Provisioned Access",
+                "Organisation Managed",
+            ],
+            index=0,
+            key="eqmp_access_model",
+        )
+
+    # =========================================================
+    # Assessment Engine
+    # =========================================================
+
+    st.markdown(
+        """
+<div class="eqmp-settings-section">
+
+<div class="eqmp-settings-title">
+Assessment Engine
+</div>
+
+<div class="eqmp-settings-description">
+Control the assumptions and governance-aware assessment behaviour.
+</div>
+
+</div>
+""",
+        unsafe_allow_html=True,
+    )
+
+    left, right = st.columns(
+        2,
+        gap="medium",
+    )
+
+    with left:
+
+        st.selectbox(
+            "Risk Model",
+            [
+                "Governance-aware",
+                "Standard",
+            ],
+            index=0,
+            key="eqmp_risk_model",
+        )
+
+        st.selectbox(
+            "Risk Threshold",
+            [
+                "Default",
+                "Conservative",
+                "Strict",
+            ],
+            index=0,
+            key="eqmp_risk_threshold",
+        )
+
+    with right:
+
+        st.toggle(
+            "Data Longevity Analysis",
+            value=True,
+            key="eqmp_data_longevity",
+        )
+
+        st.toggle(
+            "Migration Timeline Estimation",
+            value=True,
+            key="eqmp_migration_timeline",
+        )
+
+    # =========================================================
+    # Access & Accounts
+    # =========================================================
+
+    st.markdown(
+        """
+<div class="eqmp-settings-section">
+
+<div class="eqmp-settings-title">
+Access & Accounts
+</div>
+
+<div class="eqmp-settings-description">
+Manage provisioned access to the EQMP environment.
+</div>
+
+</div>
+""",
+        unsafe_allow_html=True,
+    )
+
+    account_left, account_right = st.columns(
+        2,
+        gap="medium",
+    )
+
+    with account_left:
+
+        st.markdown(
+            """
+<div style="
+    border:1px solid rgba(255,255,255,.10);
+    border-radius:8px;
+    padding:13px;
+">
+
+<div style="
+    font-size:.62rem;
+    letter-spacing:1px;
+    color:#7F91A6;
+    font-weight:700;
+">
+ACTIVE ACCOUNTS
+</div>
+
+<div style="
+    font-size:1.35rem;
+    font-weight:800;
+    color:#F5F7FA;
+    margin-top:5px;
+">
+3
+</div>
+
+<div style="
+    font-size:.65rem;
+    color:#718096;
+    margin-top:3px;
+">
+1 administrator · 1 user · 1 testing
+</div>
+
+</div>
+""",
+            unsafe_allow_html=True,
+        )
+
+    with account_right:
+
+        if st.button(
+            "Manage Accounts",
+            use_container_width=True,
+            key="eqmp_manage_accounts",
+        ):
+
+            st.info(
+                "Account management will be connected to "
+                "the administrative identity service."
+            )
+
+    # =========================================================
+    # Active Vendors
+    # =========================================================
+
+    st.markdown(
+        """
+<div class="eqmp-settings-section">
+
+<div class="eqmp-settings-title">
+Active Vendors
+</div>
+
+<div class="eqmp-settings-description">
+Manage the curated technology partners and products available
+through the EQMP Marketplace.
+</div>
+
+</div>
+""",
+        unsafe_allow_html=True,
+    )
+
+    vendors = [
+        (
+            "QuantumGenie",
+            "Quantum migration and cryptographic readiness",
+            True,
+        ),
+        (
+            "CipherNova",
+            "Cryptographic discovery and security tooling",
+            True,
+        ),
+    ]
+
+    for index, (
+        vendor,
+        description,
+        active,
+    ) in enumerate(vendors):
+
+        vendor_left, vendor_status = st.columns(
+            [8.5, 1.5],
+            gap="small",
+        )
+
+        with vendor_left:
+
+            st.markdown(
+                f"""
+<div style="
+    border:1px solid rgba(255,255,255,.10);
+    border-radius:8px;
+    padding:11px 13px;
+    margin-bottom:8px;
+">
+
+<div style="
+    font-size:.76rem;
+    font-weight:750;
+    color:#F5F7FA;
+">
+{vendor}
+</div>
+
+<div style="
+    font-size:.64rem;
+    color:#718096;
+    margin-top:4px;
+">
+{description}
+</div>
+
+</div>
+""",
+                unsafe_allow_html=True,
+            )
+
+        with vendor_status:
+
+            st.toggle(
+                "Active",
+                value=active,
+                key=f"eqmp_vendor_active_{index}",
+                label_visibility="collapsed",
+            )
+
+    if st.button(
+        "+ Add Vendor",
+        key="eqmp_add_vendor",
+    ):
+
+        st.info(
+            "Vendor onboarding will be available from the "
+            "administrative partner management workflow."
+        )
+
+    # =========================================================
+    # Security
+    # =========================================================
+
+    st.markdown(
+        """
+<div class="eqmp-settings-section">
+
+<div class="eqmp-settings-title">
+Security
+</div>
+
+<div class="eqmp-settings-description">
+Administrative security and session controls.
+</div>
+
+</div>
+""",
+        unsafe_allow_html=True,
+    )
+
+    left, right = st.columns(
+        2,
+        gap="medium",
+    )
+
+    with left:
+
+        st.toggle(
+            "Remember Device",
+            value=True,
+            key="eqmp_security_remember",
+        )
+
+        st.toggle(
+            "Audit Logging",
+            value=True,
+            key="eqmp_audit_logging",
+        )
+
+    with right:
+
+        st.selectbox(
+            "Session Duration",
+            [
+                "30 minutes",
+                "1 hour",
+                "4 hours",
+                "8 hours",
+            ],
+            index=2,
+            key="eqmp_session_duration",
+        )
+
+    # =========================================================
+    # System Status
+    # =========================================================
+
+    st.markdown(
+        """
+<div class="eqmp-settings-section">
+
+<div class="eqmp-settings-title">
+System Status
+</div>
+
+<div class="eqmp-settings-description">
+Current status of core EQMP services.
+</div>
+
+</div>
+""",
+        unsafe_allow_html=True,
+    )
+
+    status_left, status_right = st.columns(
+        2,
+        gap="medium",
+    )
+
+    status_items = [
+        ("Authentication", "Operational"),
+        ("Assessment Engine", "Operational"),
+        ("Marketplace", "Operational"),
+        ("Migration Workspace", "Operational"),
+    ]
+
+    for index, (
+        service,
+        status,
+    ) in enumerate(status_items):
+
+        column = (
+            status_left
+            if index % 2 == 0
+            else status_right
+        )
+
+        with column:
+
+            st.markdown(
+                f"""
+<div style="
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:8px 2px;
+    border-bottom:1px solid rgba(255,255,255,.06);
+">
+
+<span style="
+    font-size:.68rem;
+    color:#AEBCCE;
+">
+{service}
+</span>
+
+<span style="
+    font-size:.62rem;
+    color:#22C55E;
+">
+● {status}
+</span>
+
+</div>
+""",
+                unsafe_allow_html=True,
+            )
+
+    # =========================================================
+    # Save
+    # =========================================================
+
+    st.markdown(
+        '<div style="height:22px"></div>',
+        unsafe_allow_html=True,
+    )
+
+    save_left, save_right = st.columns(
+        [7.5, 2.5],
+        gap="small",
+    )
+
+    with save_right:
+
+        if st.button(
+            "Save Changes",
+            type="primary",
+            use_container_width=True,
+            key="eqmp_save_settings",
+        ):
+
+            st.session_state[
+                "eqmp_settings_saved"
+            ] = True
+
+            st.success(
+                "Settings saved."
+            )
