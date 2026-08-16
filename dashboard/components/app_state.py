@@ -73,6 +73,47 @@ def initialize_app_state():
             },
 
             #
+            # Enterprise Environment
+            #
+            # This is the EQMP oversight boundary.
+            # Discovery sources contribute evidence to this
+            # environment rather than becoming the system of record.
+            #
+            "environment": {
+
+                "environment_id": None,
+
+                "organization_id": None,
+
+                "name": "Primary Environment",
+
+                "status": "Not Connected",
+
+                "created_at": None,
+
+                "last_sync": None,
+
+                "sources": [],
+
+                "visibility": {
+
+                    "systems": 0,
+
+                    "applications": 0,
+
+                    "data_assets": 0,
+
+                    "cryptographic_assets": 0,
+
+                    "certificates": 0,
+
+                },
+
+                "discovery_gaps": 0,
+
+            },
+
+            #
             # Inventory
             #
             "inventory": {
